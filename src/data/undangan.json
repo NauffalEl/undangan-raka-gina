@@ -1,0 +1,69 @@
+{
+  "pasangan": {
+    "pria": "Raka Pratama",
+    "wanita": "Gina Amelia",
+    "tagline": "Raka & Gina"
+  },
+  "tanggalAkad": "2026-12-20T08:00:00+07:00",
+  "acara": [
+    {
+      "nama": "Akad Nikah",
+      "jenis": "akad",
+      "hari": "Sabtu",
+      "tanggal": "20 Desember 2026",
+      "jam": "08.00 WIB",
+      "tempat": "Masjid Al-Ikhlas",
+      "alamat": "Jl. Contoh No.123, Bandung",
+      "maps": "https://maps.google.com/?q=Masjid+Al-Ikhlas+Bandung"
+    },
+    {
+      "nama": "Resepsi",
+      "jenis": "resepsi",
+      "hari": "Sabtu",
+      "tanggal": "20 Desember 2026",
+      "jam": "11.00 - 14.00 WIB",
+      "tempat": "Gedung Sari Indah",
+      "alamat": "Jl. Contoh No.123, Bandung",
+      "maps": "https://maps.google.com/?q=Gedung+Sari+Indah+Bandung"
+    }
+  ],
+  "orangTua": {
+    "pria": "Putra dari Bapak Hartono & Ibu Siti",
+    "wanita": "Putri dari Bapak Wijaya & Ibu Dewi"
+  },
+  "sosmed": {
+    "pria": "https://instagram.com/raka",
+    "wanita": "https://instagram.com/gina"
+  },
+  "rekening": [
+    {
+      "bank": "BCA",
+      "no": "1234567890",
+      "nama": "Raka Pratama"
+    },
+    {
+      "bank": "DANA",
+      "no": "081234567890",
+      "nama": "Gina Amelia"
+    }
+  ],
+  "salam": "Assalamu'alaikum Warahmatullahi Wabarakatuk,\n\nDengan memohon ridho Allah SWT, kami bermaksud mengajak Bapak/Ibu/Saudara/i untuk hadir memberikan doa restu pada hari bahagia kami.",
+  "loveStory": [
+    {
+      "tanggal": "Januari 2023",
+      "judul": "Pertama Bertemu",
+      "deskripsi": "Bertemu di acara teman bersama, percakapan pertama yang tak terlupakan."
+    },
+    {
+      "tanggal": "Juli 2024",
+      "judul": "Lamaran",
+      "deskripsi": "Raka memohon izin kedua orang tua Gina — momen tulus dan penuh haru."
+    },
+    {
+      "tanggal": "Desember 2026",
+      "judul": "Menikah",
+      "deskripsi": "Hari yang dinanti — bersumpah setia di hadapan Tuhan dan orang-orang tercinta."
+    }
+  ],
+  "penutup": "“Dan di antara tanda-tanda kekuasaan-Nya adalah Dia menciptakan untukmu pasangan-pasangan dari jenismu sendiri, agar kamu cenderung dan merasa tenteram kepadanya...” (QS. Ar-Rum: 21)\n\nTerima kasih atas doa restu dan kehadiran Bapak/Ibu/Saudara/i. Sampai jumpa di hari bahagia kami."
+}

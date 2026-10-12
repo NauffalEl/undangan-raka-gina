@@ -1,0 +1,268 @@
+@import "tailwindcss";
+
+@theme {
+  --color-bg: #FBF7F0;
+  --color-surface: #FFFFFF;
+  --color-surface-warm: #F6F0E6;
+  --color-line: #E7DCC9;
+  --color-line-strong: #D8C7AB;
+
+  --color-ink: #2E1F14;
+  --color-ink-soft: #6B5A4C;
+  --color-ink-muted: #8A7867;
+
+  --color-accent-lite: #D9BE78;
+  --color-accent: #C29B44;
+  --color-accent-600: #A8812F;
+  --color-accent-deep: #7E611F;
+  --color-accent-soft: #FBF6E9;
+  --color-accent-line: #DFC383;
+
+  --color-sage-50: #F4F7F4;
+  --color-sage-100: #E8EFE9;
+  --color-sage-300: #B3C7B8;
+  --color-sage-500: #7D9483;
+  --color-sage-600: #6E8575;
+  --color-sage-700: #4F6355;
+
+  --color-danger: #9B2C2C;
+  --color-danger-soft: #FBEDED;
+  --color-success: #3F6B4A;
+  --color-success-soft: #E9F3EC;
+  --color-warning: #9A6B12;
+
+  --font-display: var(--font-cormorant), Georgia, serif;
+  --font-body: var(--font-jakarta), system-ui, sans-serif;
+
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-2xl: 32px;
+  --radius-pill: 999px;
+  --radius-arch: 50% 50% 12px 12px / 28% 28% 12px 12px;
+
+  --shadow-xs: 0 1px 2px rgba(46,31,20,.06);
+  --shadow-sm: 0 2px 6px rgba(46,31,20,.08);
+  --shadow-md: 0 6px 16px rgba(46,31,20,.10);
+  --shadow-lg: 0 12px 28px rgba(46,31,20,.14);
+  --shadow-fab: 0 4px 12px rgba(46,31,20,.18);
+  --ring-gold: 0 0 0 6px rgba(217,190,120,.28);
+  --inset-hairline: inset 0 0 0 1px rgba(194,155,68,.35);
+
+  --ease-standard: cubic-bezier(.2,.7,.3,1);
+  --ease-soft-out: cubic-bezier(.16,1,.3,1);
+  --ease-inout: cubic-bezier(.4,0,.2,1);
+
+  --dur-instant: 100ms;
+  --dur-fast: 160ms;
+  --dur-base: 220ms;
+  --dur-slow: 360ms;
+  --dur-reveal: 600ms;
+  --reveal-shift: 16px;
+  --stagger: 60ms;
+  --parallax-max: 12%;
+  --vol-fade: 800ms;
+
+  --duration-instant: 100ms;
+  --duration-fast: 160ms;
+  --duration-base: 220ms;
+  --duration-slow: 360ms;
+  --duration-reveal: 600ms;
+
+  /* Tipografi — design-system §2.1 */
+  --text-display-2xl: 3rem;
+  --text-display-2xl--line-height: 1.05;
+  --text-display-2xl--letter-spacing: -0.02em;
+  --text-display-2xl-up: 3.5rem;
+
+  --text-display-xl: 2.5rem;
+  --text-display-xl--line-height: 1.1;
+  --text-display-lg: 2rem;
+  --text-display-lg--line-height: 1.15;
+  --text-display-lg-up: 2.25rem;
+  --text-display-md: 1.75rem;
+  --text-display-md--line-height: 1.2;
+  --text-display-sm: 1.375rem;
+  --text-display-sm--line-height: 1.3;
+
+  --text-eyebrow: 0.6875rem;
+  --text-eyebrow--line-height: 1.2;
+  --text-eyebrow--letter-spacing: 0.18em;
+
+  --text-body-lg: 1.0625rem;
+  --text-body-lg--line-height: 1.65;
+  --text-body: 0.9375rem;
+  --text-body--line-height: 1.65;
+  --text-body-up: 1rem;
+  --text-body-sm: 0.875rem;
+  --text-body-sm--line-height: 1.55;
+  --text-label: 0.875rem;
+  --text-label--line-height: 1.2;
+  --text-caption: 0.8125rem;
+  --text-caption--line-height: 1.45;
+  --text-micro: 0.75rem;
+  --text-micro--line-height: 1.4;
+  --text-countdown: 2.125rem;
+  --text-countdown--line-height: 1;
+}
+
+/* Alias var lama (scaffold musik.tsx) + token akses langsung */
+:root {
+  --bg: #FBF7F0;
+  --surface: #FFFFFF;
+  --surface-warm: #F6F0E6;
+  --line: #E7DCC9;
+  --line-strong: #D8C7AB;
+  --ink: #2E1F14;
+  --ink-soft: #6B5A4C;
+  --ink-muted: #8A7867;
+  --accent: #C29B44;
+  --accent-lite: #D9BE78;
+  --accent-600: #A8812F;
+  --accent-deep: #7E611F;
+  --accent-soft: #FBF6E9;
+  --accent-line: #DFC383;
+  --sage-50: #F4F7F4;
+  --sage-100: #E8EFE9;
+  --sage-300: #B3C7B8;
+  --sage-500: #7D9483;
+  --sage-600: #6E8575;
+  --sage-700: #4F6355;
+  --danger: #9B2C2C;
+  --danger-soft: #FBEDED;
+  --success: #3F6B4A;
+  --success-soft: #E9F3EC;
+  --warning: #9A6B12;
+  --focus: #7E611F;
+  --ring-gold: 0 0 0 6px rgba(217,190,120,.28);
+  --inset-hairline: inset 0 0 0 1px rgba(194,155,68,.35);
+  --dur-instant: 100ms;
+  --dur-fast: 160ms;
+  --dur-base: 220ms;
+  --dur-slow: 360ms;
+  --dur-reveal: 600ms;
+  --reveal-shift: 16px;
+  --stagger: 60ms;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.65;
+  overflow-x: hidden;
+}
+
+.font-display {
+  font-family: var(--font-display);
+}
+
+.font-body {
+  font-family: var(--font-body);
+}
+
+/* Fokus keyboard — baseline a11y seluruh halaman */
+*:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+/* Section reveal — default TERLIHAT (JS mati tetap aman).
+   Class disembunyikan hanya bila JS menandai animasi aktif. */
+.reveal {
+  transition:
+    opacity var(--dur-reveal) var(--ease-soft-out),
+    transform var(--dur-reveal) var(--ease-soft-out);
+}
+/* Tanpa JS (html.js tidak ada): konten tetap terlihat penuh. */
+.js .reveal-hidden {
+  opacity: 0;
+  transform: translateY(var(--reveal-shift));
+}
+
+@keyframes fabIn {
+  from {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+.fab-in {
+  animation: fab-in var(--dur-base) var(--ease-soft-out) both;
+}
+
+@keyframes shimmer {
+  0%,
+  100% {
+    opacity: 0.45;
+  }
+  50% {
+    opacity: 0.9;
+  }
+}
+.skeleton {
+  animation: shimmer 1.4s var(--ease-inout) infinite;
+  background: var(--surface-warm);
+}
+
+@keyframes popIn {
+  from {
+    transform: translateY(6px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+.pop-in {
+  animation: pop-in var(--dur-slow) var(--ease-soft-out) both;
+}
+
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  /* Reveal tetap tampil — jangan sembunyikan konten saat reduce */
+  .js .reveal-hidden {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--accent-line);
+  border-radius: 3px;
+}
