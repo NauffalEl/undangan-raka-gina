@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Reveal, Chip } from "./ui";
-import { Ornamen, Salin, Centang, Info } from "./icons";
+import { Reveal, Chip, Kelopak } from "./ui";
+import { Ornamen3D, Salin, Centang, Info } from "./icons";
 import { salinTeks, cn } from "@/lib/utils";
 import type { Rekening } from "@/lib/utils";
 
@@ -73,7 +73,7 @@ export function AmplopDigital({ rekening }: { rekening: Rekening[] }) {
     <section id="amplop" aria-labelledby="amplop-judul" className="px-5 py-14">
       <Reveal className="mx-auto max-w-[28rem]">
         <div className="mb-8 flex justify-center" aria-hidden>
-          <Ornamen />
+          <Ornamen3D />
         </div>
         <h2
           id="amplop-judul"
@@ -94,25 +94,30 @@ export function AmplopDigital({ rekening }: { rekening: Rekening[] }) {
           </div>
         ) : (
           <div className="mt-8 space-y-4">
-            {rekening.map((r) => (
-              <article
-                key={`${r.bank}-${r.no}`}
-                className="rounded-lg border border-line bg-surface p-5 shadow-[var(--inset-hairline),var(--shadow-sm)]"
-              >
-                <div className="mb-3 flex items-center gap-2">
-                  <Chip tone="sage">{r.bank}</Chip>
-                  <p className="text-caption text-ink-soft">a.n. {r.nama}</p>
-                </div>
-                <SalinField
-                  label={`Nomor rekening ${r.bank}`}
-                  nilai={r.no}
-                  ariaLabel={`Nomor rekening ${r.bank} ${r.no}`}
-                />
-              </article>
+            {rekening.map((r, i) => (
+              <div key={`${r.bank}-${r.no}`}>
+                <Reveal delay={i * 70}>
+                  <article className="rounded-lg border border-line bg-surface p-5 shadow-[var(--inset-hairline),var(--shadow-sm)]">
+                    <div className="mb-3 flex items-center gap-2">
+                      <Chip tone="sage">{r.bank}</Chip>
+                      <p className="text-caption text-ink-soft">a.n. {r.nama}</p>
+                    </div>
+                    <SalinField
+                      label={`Nomor rekening ${r.bank}`}
+                      nilai={r.no}
+                      ariaLabel={`Nomor rekening ${r.bank} ${r.no}`}
+                    />
+                  </article>
+                </Reveal>
+                {i < rekening.length - 1 && (
+                  <div className="my-4 flex justify-center" aria-hidden>
+                    <Ornamen3D />
+                  </div>
+                )}
+              </div>
             ))}
           </div>
         )}
-
       </Reveal>
     </section>
   );

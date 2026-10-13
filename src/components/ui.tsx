@@ -4,7 +4,77 @@ import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import { Ornamen } from "./icons";
 
-/** Animasi masuk ringan: transform + opacity, sekali terlihat, tanpa layout shift. */
+/* ── Singleton: pause semua looping saat tab hidden ── */
+let visWired = false;
+function usePauseOnHidden() {
+  useEffect(() => {
+    if (visWired || typeof document === "undefined") return;
+    visWired = true;
+    const sync = () => {
+      document.documentElement.dataset.paused = document.hidden ? "1" : "0";
+    };
+    sync();
+    document.addEventListener("visibilitychange", sync);
+  }, []);
+}
+
+/* ── Kelopak: partikel bunga jatuh ── */
+function pseudo(i: number, salt = 0): number {
+  // deterministik 0..1, tanpa Math.random (hindari hydration mismatch)
+  return ((i * 9301 + 49297 + salt * 233280) % 233280) / 233280;
+}
+
+export function Kelopak({
+  jumlah = 8,
+  area = "hero",
+}: {
+  jumlah?: number;
+  area?: "hero" | "mempelai" | "penutup";
+}) {
+  usePauseOnHidden();
+  const max = area === "hero" ? 8 : area === "mempelai" ? 4 : 6;
+  const n = Math.min(jumlah, max);
+
+  const petals = Array.from({ length: n }, (_, i) => {
+    const r = pseudo(i, area === "hero" ? 11 : area === "mempelai" ? 22 : 33);
+    const r2 = pseudo(i + 7, 5);
+    const r3 = pseudo(i + 13, 9);
+    return {
+      left: `${((i + 0.5) / n) * 100}%`,
+      drift: `${Math.round((r * 2 - 1) * (area === "hero" ? 60 : 36))}px`,
+      size: area === "hero" ? 9 + Math.round(r2 * 5) : 8 + Math.round(r2 * 4),
+      dur: area === "hero" ? 9 + r3 * 5 : 7 + r3 * 4,
+      delay: -(r * (area === "hero" ? 12 : 6)),
+      bg: i % 2 === 0 ? "var(--color-blush)" : "var(--color-accent-line)",
+      opacity: i % 3 === 0 ? 0.55 : 0.7,
+    };
+  });
+
+  return (
+    <div className="petal-layer" aria-hidden>
+      {petals.map((p, i) => (
+        <span
+          key={i}
+          className="petal"
+          style={
+            {
+              left: p.left,
+              "--petal-drift": p.drift,
+              width: `${p.size}px`,
+              height: `${p.size + 2}px`,
+              background: p.bg,
+              opacity: p.opacity as unknown as string,
+              animationDuration: `${p.dur.toFixed(2)}s`,
+              animationDelay: `${p.delay.toFixed(2)}s`,
+            } as React.CSSProperties
+          }
+        />
+      ))}
+    </div>
+  );
+}
+
+/** Reveal v2: rise-3d (perspective + rotateX kecil saat scroll masuk, bukan cuma translateY). */
 export function Reveal({
   children,
   className,
@@ -18,19 +88,23 @@ export function Reveal({
 }) {
   const ref = useRef<HTMLElement | null>(null);
   const [visible, setVisible] = useState(false);
+  const [isAnim, setIsAnim] = useState(false);
 
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    // Reduced-motion / tanpa IO: biarkan tampil (CSS media query yang
-    // menetralkan .reveal-hidden — tanpa setState di effect).
-    if (typeof IntersectionObserver === "undefined" || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    if (
+      typeof IntersectionObserver === "undefined" ||
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ) {
       return;
     }
     const io = new IntersectionObserver(
       (entries) => {
         if (entries[0]?.isIntersecting) {
           setVisible(true);
+          setIsAnim(true);
+          window.setTimeout(() => setIsAnim(false), 700);
           io.disconnect();
         }
       },
@@ -47,9 +121,9 @@ export function Reveal({
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       ref={ref as any}
       style={{ transitionDelay: `${delay}ms` }}
-      className={cn("reveal", !visible && "reveal-hidden", className)}
+      className={cn("reveal3d", visible && "is-in", isAnim && "is-anim", className)}
     >
-      {children}
+      <div className="reveal3d-inner">{children}</div>
     </Component>
   );
 }

@@ -13,3 +13,7 @@
 | 2026-10-12 16:53 | Wulan QA | Wulan | 8 area diuji headless CDP. Laporan belum jadi file (proses terminated) |
 | 2026-10-12 17:10 | Fix temuan Gilang | Bima | CSP headers, RSVP fetch text-plain+honeypot, rate-limit global, userAgent, window.open noopener, buku-tamu fetch backend |
 | 2026-10-12 17:12 | Build final | Bima | ✅ SUKSES (7.5s, static export, prerendered /) |
+| 2026-10-13 00:12 | Undeploy preview | Bima | Cloudflare logout, temp account cleared, wrangler.jsonc dihapus |
+| 2026-10-13 00:14 | Review user: kurang ramai + kurang animasi + tambah 3D | Bima | Revisi v2 dimulai |
+| 2026-10-13 00:16 | Desain v2 selesai | Sinta | design-system-v2.md (296 baris) + spec-halaman-v2.md (244 baris). Efek 3D CSS-only, tanpa Three.js/WebGL |
+| 2026-10-13 00:17 | Delegasi implementasi v2 | Raka | 8 file, build harus hijau. Berjalan background... |

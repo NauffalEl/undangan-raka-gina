@@ -14,6 +14,8 @@ import type { Undangan } from "@/lib/utils";
 import { tanggalPisah, tanggalPanjang } from "@/lib/utils";
 
 const undangan = data as Undangan;
+const kutipan = undangan.penutup?.split(/\n{2,}/)[0]?.trim();
+const tanggalCover = tanggalPisah(undangan.tanggalAkad);
 
 export default function Home() {
   const foto = undangan.foto ?? {
@@ -24,11 +26,10 @@ export default function Home() {
       alt: `Foto kenangan ${n}`,
     })),
   } as { pria: string; wanita: string; galeri: { src: string; alt: string }[] };
-  const kutipan = undangan.penutup?.split(/\n{2,}/)[0]?.trim();
-  const tanggalCover = tanggalPisah(undangan.tanggalAkad);
 
   return (
     <>
+
       <a
         href="#salam"
         className="sr-only focus:not-sr-only focus:absolute focus:top-3 focus:left-3 focus:z-[80] focus:rounded-md focus:bg-surface focus:px-4 focus:py-2 focus:text-label focus:font-semibold focus:text-ink"

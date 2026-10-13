@@ -1,7 +1,7 @@
 "use client";
 
-import { Reveal, Tombol } from "./ui";
-import { Ornamen, WhatsApp } from "./icons";
+import { Reveal, Tombol, Kelopak } from "./ui";
+import { Ornamen3D, WhatsApp } from "./icons";
 
 export function Penutup({ kutipan, namaPasangan, tanggal }: { kutipan?: string; namaPasangan: string; tanggal?: string }) {
   const share = () => {
@@ -17,10 +17,12 @@ export function Penutup({ kutipan, namaPasangan, tanggal }: { kutipan?: string; 
   };
 
   return (
-    <section id="penutup" aria-labelledby="penutup-judul" className="px-5 py-14">
-      <Reveal className="mx-auto max-w-[28rem] text-center">
+    <section id="penutup" aria-labelledby="penutup-judul" className="relative overflow-hidden px-5 py-14">
+      {/* Kelopak bunga jatuh penutup (max 6) */}
+      <Kelopak jumlah={6} area="penutup" />
+      <Reveal className="relative mx-auto max-w-[28rem] text-center">
         <div className="mb-8 flex justify-center" aria-hidden>
-          <Ornamen />
+          <Ornamen3D />
         </div>
 
         {kutipan && (
@@ -29,7 +31,7 @@ export function Penutup({ kutipan, namaPasangan, tanggal }: { kutipan?: string; 
           </blockquote>
         )}
 
-        <h2 id="penutup-judul" className="mt-8 font-display text-display-md text-ink">
+        <h2 id="penutup-judul" className="gold-shimmer mt-8 font-display text-display-md text-ink">
           {namaPasangan}
         </h2>
         {tanggal && (

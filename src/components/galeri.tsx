@@ -41,6 +41,104 @@ function useFocusTrap(aktif: boolean, ref: React.RefObject<HTMLElement | null>) 
   }, [aktif, ref]);
 }
 
+function deterministicRotate(i: number, seed: number): { x: number; y: number; z: number; zDepth: number } {
+  const r = ((i * 9301 + 49297 + seed * 233280) % 233280) / 233280;
+  const r2 = ((i * 9301 + 49297 + (seed + 7) * 233280) % 233280) / 233280;
+  const r3 = ((i * 9301 + 49297 + (seed + 13) * 233280) % 233280) / 233280;
+  const r4 = ((i * 9301 + 49297 + (seed + 19) * 233280) % 233280) / 233280;
+  return {
+    x: (r2 * 2 - 1) * 4,
+    y: (r * 2 - 1) * 6,
+    z: (r3 * 2 - 1) * 2,
+    zDepth: r4 * 12,
+  };
+}
+
+function PolaroidThumb({
+  foto,
+  index,
+  onClick,
+  isDesktop,
+}: {
+  foto: Foto;
+  index: number;
+  onClick: () => void;
+  isDesktop: boolean;
+}) {
+  if (isDesktop) {
+    // Desktop: polaroid 3D berserakan
+    const rot = deterministicRotate(index, 111);
+    const delay = index * 70; // stagger 70ms
+    return (
+      <button
+        type="button"
+        role="listitem"
+        onClick={onClick}
+        aria-label={`Foto ${index + 1}`}
+        className={cn(
+          "relative group aspect-[4/5] rounded-md border border-line bg-surface-warm",
+          "transition-transform duration-[220ms] hover:translate-z-[16px] hover:rotate-0",
+          "cursor-pointer",
+        )}
+        style={{
+          "--delay": `${delay}ms`,
+          transform: `rotateX(${rot.x}deg) rotateY(${rot.y}deg) rotateZ(${rot.z}deg) translateZ(${rot.zDepth}px)`,
+          transitionDelay: `${delay}ms`,
+          perspective: "1200px",
+        } as React.CSSProperties}
+      >
+        <Image
+          src={foto.src}
+          alt={foto.alt}
+          fill
+          sizes="(max-width:1023px) 50vw, 33vw"
+          loading="lazy"
+          className="object-cover rounded-md"
+        />
+        <figcaption className="absolute bottom-0 left-0 right-0 bg-white px-3 py-2 text-center text-micro text-ink-soft">
+          {foto.alt}
+        </figcaption>
+      </button>
+    );
+  }
+  // Mobile: grid 2 kolom rapi, flip 3D saat diklik
+  const [flipped, setFlipped] = useState(false);
+  return (
+    <button
+      type="button"
+      role="listitem"
+      onClick={() => {
+        setFlipped(true);
+        setTimeout(() => onClick(), 190); // 380ms flip total, open halfway
+      }}
+      aria-label={`Foto ${index + 1}`}
+      className={cn(
+        "relative group aspect-[4/5] rounded-md border border-line bg-surface-warm",
+        "perspective-[1200px]",
+        flipped && "flip-num", // flip-num keyframe 600ms, using for 380ms? adjust
+      )}
+    >
+      <div
+        className="relative aspect-[4/5] w-full overflow-hidden rounded-md"
+        style={{
+          transformStyle: "preserve-3d",
+          transition: "transform 380ms var(--ease-soft-out)",
+          transform: flipped ? "rotateY(-90deg)" : "rotateY(0deg)",
+        }}
+      >
+        <Image
+          src={foto.src}
+          alt={foto.alt}
+          fill
+          sizes="(max-width:1023px) 50vw, 33vw"
+          loading="lazy"
+          className="object-cover"
+        />
+      </div>
+    </button>
+  );
+}
+
 export function Lightbox({
   foto,
   index,
@@ -81,7 +179,7 @@ export function Lightbox({
       role="dialog"
       aria-modal="true"
       aria-label={`Foto ${index + 1} dari ${foto.length}`}
-      className="fixed inset-0 z-[60] flex flex-col items-center justify-center bg-[rgba(46,31,20,0.92)] p-4"
+      className="fixed inset-0 z-[60] flex flex-col items-center justify-center bg-[var(--color-veil)] p-4"
       onTouchStart={(e) => {
         const t = e.touches[0];
         sentuh.current = { x: t.clientX, y: t.clientY };
@@ -105,7 +203,10 @@ export function Lightbox({
       </button>
 
       <figure className="flex min-h-0 flex-col items-center gap-3">
-        <div className="relative h-[82svh] w-full max-w-3xl overflow-hidden rounded-lg">
+        <div
+          className="zoom-3d relative h-[82svh] w-full max-w-3xl overflow-hidden rounded-lg"
+          style={{ perspective: "1200px" }}
+        >
           <Image
             key={arus.src}
             src={arus.src}
@@ -144,6 +245,14 @@ export function Lightbox({
 
 export function Galeri({ foto }: { foto: Foto[] }) {
   const [buka, setBuka] = useState<number | null>(null);
+  const [isDesktop, setIsDesktop] = useState(false);
+
+  useEffect(() => {
+    const check = () => setIsDesktop(window.innerWidth >= 1024);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
 
   const tutup = useCallback(() => setBuka(null), []);
   const prev = useCallback(
@@ -178,31 +287,21 @@ export function Galeri({ foto }: { foto: Foto[] }) {
         ) : (
           <>
             <div
-              className="mt-8 grid grid-cols-2 gap-2 lg:grid-cols-3"
+              className="mt-8 grid gap-2"
               role="list"
               aria-label="Foto kenangan"
+              style={{
+                gridTemplateColumns: isDesktop ? "repeat(3, 1fr)" : "repeat(2, 1fr)",
+              }}
             >
               {foto.slice(0, 9).map((f, i) => (
-                <button
+                <PolaroidThumb
                   key={f.src}
-                  type="button"
-                  role="listitem"
+                  foto={f}
+                  index={i}
                   onClick={() => setBuka(i)}
-                  aria-label={`Foto ${i + 1} dari ${foto.length}`}
-                  className={cn(
-                    "group relative min-h-0 overflow-hidden rounded-md border border-line bg-surface-warm text-left",
-                    "aspect-[4/5] transition-transform duration-[160ms] hover:-translate-y-0.5",
-                  )}
-                >
-                  <Image
-                    src={f.src}
-                    alt={f.alt}
-                    fill
-                    sizes="(max-width:1023px) 50vw, 33vw"
-                    loading="lazy"
-                    className="object-cover"
-                  />
-                </button>
+                  isDesktop={isDesktop}
+                />
               ))}
             </div>
             {buka !== null && (

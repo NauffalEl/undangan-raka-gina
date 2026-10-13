@@ -212,7 +212,7 @@ export function Bulat({ className = "h-3 w-3", ...rest }: I) {
   return <Svg className={className} {...rest}><circle cx="12" cy="12" r="6" fill="currentColor" /></Svg>;
 }
 
-/** Divider ornamen antar section (design-system §6.5). */
+/** Divider ornamen v1 — single layer. */
 export function Ornamen(props: I) {
   return (
     <svg
@@ -230,5 +230,42 @@ export function Ornamen(props: I) {
       <circle cx="48" cy="12" r="2" />
       <circle cx="72" cy="12" r="2" />
     </svg>
+  );
+}
+
+/** Divider ornamen v2 — 2 lapis: depan --accent + belakang --bronze blur translateZ(-8px) rotate3d(1,0,0,12deg). */
+export function Ornamen3D(props: React.HTMLAttributes<HTMLDivElement>) {
+  return (
+    <div
+      className="relative h-6 w-28 shrink-0 preserve-3d"
+      aria-hidden
+      {...props}
+    >
+      <svg
+        viewBox="0 0 136 24"
+        className="absolute inset-0 text-[var(--accent)]"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1"
+      >
+        <path d="M0 12h46M90 12h46" />
+        <path d="M68 4c4 4 4 12 0 16-4-4-4-12 0-16z" />
+        <circle cx="56" cy="12" r="2" />
+        <circle cx="80" cy="12" r="2" />
+      </svg>
+      <svg
+        viewBox="0 0 136 24"
+        className="absolute inset-0 text-[var(--bronze)] opacity-40 blur-[1px]"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1"
+        style={{ transform: "translateZ(-8px) rotate3d(1, 0, 0, 12deg)" }}
+      >
+        <path d="M0 12h46M90 12h46" />
+        <path d="M68 4c4 4 4 12 0 16-4-4-4-12 0-16z" />
+        <circle cx="56" cy="12" r="2" />
+        <circle cx="80" cy="12" r="2" />
+      </svg>
+    </div>
   );
 }

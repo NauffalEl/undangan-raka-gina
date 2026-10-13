@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { cn } from "@/lib/utils";
 
 type Sisa = { d: number; h: number; m: number; s: number };
 
@@ -18,22 +19,47 @@ function hitung(targetMs: number, now: number): Sisa {
   };
 }
 
-function Kotak({ nilai, label }: { nilai: string; label: string }) {
+/** Kotak angka 3D: muka translateZ(10px) + alas bronze translateZ(-6px). */
+function Kotak({
+  nilai,
+  label,
+  berubah,
+}: {
+  nilai: string;
+  label: string;
+  berubah: boolean;
+}) {
   return (
-    <div className="flex flex-col items-center gap-1 rounded-md border border-accent-line bg-surface px-2 py-3 shadow-xs sm:px-4">
-      <span className="font-display text-countdown font-semibold text-ink tabular-nums">
+    <div
+      className="relative flex flex-col items-center gap-1 rounded-md border border-accent-line bg-surface px-2 py-3 shadow-xs sm:px-4"
+      style={{ perspective: "800px" }}
+    >
+      {/* Alas bronze di belakang */}
+      <span
+        aria-hidden
+        className="absolute inset-0 rounded-md bg-[var(--color-bronze)] opacity-50"
+        style={{ transform: "translateZ(-6px) scale(1.02)" }}
+      />
+      {/* Muka (angka) */}
+      <span
+        className={cn(
+          "relative font-display text-countdown font-semibold text-ink tabular-nums",
+          berubah && "flip-num"
+        )}
+        style={{ transform: "translateZ(10px)" }}
+      >
         {nilai}
       </span>
-      <span className="text-eyebrow font-semibold text-ink-soft uppercase">{label}</span>
+      <span
+        className="relative text-eyebrow font-semibold text-ink-soft uppercase"
+        style={{ transform: "translateZ(10px)" }}
+      >
+        {label}
+      </span>
     </div>
   );
 }
 
-/**
- * Countdown WIB. Render di client (skeleton saat SSR) — angka hitung mundur
- * beda antara server & client, jadi dihindari hydration mismatch.
- * setInterval 1 dtk, dihitung ulang tiap tick (koreksi drift), pause saat hidden.
- */
 export function Countdown({
   target,
   judul = "Menuju Hari Bahagia",
@@ -49,6 +75,7 @@ export function Countdown({
   const [sisa, setSisa] = useState<Sisa>({ d: 0, h: 0, m: 0, s: 0 });
   const [ucapan, setUcapan] = useState("");
   const menitLalu = useRef<number>(-1);
+  const refSisa = useRef<Sisa>({ d: 0, h: 0, m: 0, s: 0 });
 
   useEffect(() => {
     if (!valid) return;
@@ -57,6 +84,7 @@ export function Countdown({
 
     const tick = () => {
       const next = hitung(targetMs, Date.now());
+      refSisa.current = next;
       setSisa(next);
       if (next.m !== menitLalu.current) {
         menitLalu.current = next.m;
@@ -95,7 +123,23 @@ export function Countdown({
     };
   }, [targetMs, valid]);
 
-  // isClient: false saat SSR, true setelah hydration (hindari mismatch).
+  // Kotak mana yang berubah nilai pada tick terakhir (mulai flip)
+  const [flip, setFlip] = useState<{ d: boolean; h: boolean; m: boolean; s: boolean }>({
+    d: false,
+    h: false,
+    m: false,
+    s: false,
+  });
+  useEffect(() => {
+    const p = refSisa.current;
+    setFlip({
+      d: p.d !== sisa.d,
+      h: p.h !== sisa.h,
+      m: p.m !== sisa.m,
+      s: p.s !== sisa.s,
+    });
+  }, [sisa]);
+
   const siap = useSyncExternalStore(
     () => () => {},
     () => true,
@@ -108,7 +152,11 @@ export function Countdown({
 
   if (selesai) {
     return (
-      <section id="countdown" aria-labelledby="countdown-judul" className="px-5 py-14 text-center">
+      <section
+        id="countdown"
+        aria-labelledby="countdown-judul"
+        className="px-5 py-14 text-center"
+      >
         <h2 id="countdown-judul" className="font-display text-display-lg text-ink">
           {judul}
         </h2>
@@ -116,8 +164,12 @@ export function Countdown({
           <span aria-hidden className="font-display text-3xl text-sage-700">
             ❦
           </span>
-          <p className="font-display text-display-sm text-ink">Acara telah dilaksanakan</p>
-          <p className="text-body-sm text-sage-700">Terima kasih atas doa &amp; restunya</p>
+          <p className="font-display text-display-sm text-ink">
+            Acara telah dilaksanakan
+          </p>
+          <p className="text-body-sm text-sage-700">
+            Terima kasih atas doa &amp; restunya
+          </p>
           <p className="text-caption text-sage-700">{zona}</p>
         </div>
       </section>
@@ -125,18 +177,25 @@ export function Countdown({
   }
 
   return (
-    <section id="countdown" aria-labelledby="countdown-judul" className="px-5 py-14 text-center">
+    <section
+      id="countdown"
+      aria-labelledby="countdown-judul"
+      className="px-5 py-14 text-center"
+    >
       <h2 id="countdown-judul" className="font-display text-display-lg text-ink">
         {judul}
       </h2>
 
       {siap ? (
         <>
-          <div className="mx-auto mt-8 grid max-w-md grid-cols-4 gap-2 sm:gap-3" aria-live="off">
-            <Kotak nilai={nol(sisa.d)} label="Hari" />
-            <Kotak nilai={nol(sisa.h)} label="Jam" />
-            <Kotak nilai={nol(sisa.m)} label="Menit" />
-            <Kotak nilai={nol(sisa.s)} label="Detik" />
+          <div
+            className="mx-auto mt-8 grid max-w-md grid-cols-4 gap-2 sm:gap-3"
+            aria-live="off"
+          >
+            <Kotak nilai={nol(sisa.d)} label="Hari" berubah={flip.d} />
+            <Kotak nilai={nol(sisa.h)} label="Jam" berubah={flip.h} />
+            <Kotak nilai={nol(sisa.m)} label="Menit" berubah={flip.m} />
+            <Kotak nilai={nol(sisa.s)} label="Detik" berubah={flip.s} />
           </div>
           <p className="sr-only" aria-live="polite">
             {ucapan}
@@ -144,14 +203,19 @@ export function Countdown({
           <p className="mt-4 text-caption text-ink-soft">{zona}</p>
         </>
       ) : (
-        <div className="mx-auto mt-8 grid max-w-md grid-cols-4 gap-2 sm:gap-3" aria-hidden>
+        <div
+          className="mx-auto mt-8 grid max-w-md grid-cols-4 gap-2 sm:gap-3"
+          aria-hidden
+        >
           {["Hari", "Jam", "Menit", "Detik"].map((l) => (
             <div
               key={l}
               className="flex flex-col items-center gap-1 rounded-md border border-accent-line bg-surface px-2 py-3 sm:px-4"
             >
               <span className="skeleton h-9 w-10 rounded-sm" />
-              <span className="text-eyebrow font-semibold text-ink-soft uppercase">{l}</span>
+              <span className="text-eyebrow font-semibold text-ink-soft uppercase">
+                {l}
+              </span>
             </div>
           ))}
         </div>

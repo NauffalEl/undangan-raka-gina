@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Reveal, Chip, Tombol } from "./ui";
-import { Ornamen, Hati, Orang } from "./icons";
+import { Ornamen3D, Hati, Orang } from "./icons";
 import { simpanLokal, waktuRelatif, ENDPOINT_UCAPAN } from "@/lib/utils";
 import type { Ucapan } from "@/lib/utils";
 
@@ -19,7 +19,6 @@ async function muatBackend(): Promise<Ucapan[]> {
     if (!res.ok) return [];
     const json = await res.json();
     if (!json.ok || !Array.isArray(json.data)) return [];
-    // map backend format -> Ucapan
     return json.data.map((d: Record<string, unknown>) => ({
       id: String(d.timestamp),
       nama: String(d.nama || ""),
@@ -38,12 +37,9 @@ export function BukuTamu() {
   const [muat, setMuat] = useState(true);
 
   useEffect(() => {
-    // Muat setelah paint pertama (rAF) — skeleton dulu, tanpa setState
-    // sinkron di body effect. Hasil SSR & first-paint identik (kosong).
     requestAnimationFrame(async () => {
       const demo = muatDemo();
       const backend = await muatBackend();
-      // Gabung: backend dulu (terbaru), lalu demo (dedupe by id)
       const gabung = [...backend, ...demo.filter((d) => !backend.some((b) => b.id === d.id))];
       setUcapan(gabung);
       setMuat(false);
@@ -63,7 +59,7 @@ export function BukuTamu() {
       <section id="buku-tamu" aria-labelledby="buku-judul" className="px-5 py-14">
         <Reveal className="mx-auto max-w-[28rem]">
           <div className="mb-8 flex justify-center" aria-hidden>
-            <Ornamen />
+            <Ornamen3D />
           </div>
           <h2 id="buku-judul" className="text-center font-display text-display-lg text-ink">
             Buku Tamu
@@ -78,8 +74,11 @@ export function BukuTamu() {
     );
   }
 
-  const Kartucapan = ({ item }: { item: Ucapan }) => (
-    <article className="relative rounded-lg border border-line bg-surface p-5 shadow-[var(--inset-hairline),var(--shadow-sm)]">
+  const Kartucapan = ({ item, delay }: { item: Ucapan; delay: number }) => (
+    <article
+      className="stagger-pop relative rounded-lg border border-line bg-surface p-5 shadow-[var(--inset-hairline),var(--shadow-sm)]"
+      style={{ animationDelay: `${delay}ms` } as React.CSSProperties}
+    >
       <div className="flex items-start gap-3">
         <span aria-hidden className="grid h-10 w-10 place-items-center rounded-full bg-accent-soft text-accent-deep">
           <Orang className="h-5 w-5" />
@@ -114,7 +113,7 @@ export function BukuTamu() {
     <section id="buku-tamu" aria-labelledby="buku-judul" className="px-5 py-14">
       <Reveal className="mx-auto max-w-[28rem]">
         <div className="mb-8 flex justify-center" aria-hidden>
-          <Ornamen />
+          <Ornamen3D />
         </div>
         <h2
           id="buku-judul"
@@ -125,7 +124,7 @@ export function BukuTamu() {
 
         {ucapan.length === 0 ? (
           <div className="mt-8 flex flex-col items-center gap-3 text-center">
-            <Ornamen />
+            <Ornamen3D />
             <p className="font-display text-display-sm italic text-ink-soft">
               Belum ada ucapan
             </p>
@@ -136,9 +135,9 @@ export function BukuTamu() {
           </div>
         ) : (
           <ul className="mt-8 space-y-3" role="list" aria-label="Daftar ucapan tamu">
-            {ucapan.slice(0, 12).map((u) => (
+            {ucapan.slice(0, 12).map((u, i) => (
               <li key={u.id}>
-                <Kartucapan item={u} />
+                <Kartucapan item={u} delay={i * 70} />
               </li>
             ))}
             {ucapan.length > 12 && (

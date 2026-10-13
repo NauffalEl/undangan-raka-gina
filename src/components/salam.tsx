@@ -1,6 +1,7 @@
 import { Reveal } from "./ui";
+import { Ornamen3D } from "./icons";
 
-/** Salam pembuka — teks dari undangan.json.salam. */
+/** Salam pembuka — teks dari undangan.json.salam + divider 3D. */
 export function Salam({ teks }: { teks?: string }) {
   const isi =
     teks && teks.trim()
@@ -12,6 +13,9 @@ export function Salam({ teks }: { teks?: string }) {
   return (
     <section id="salam" aria-labelledby="salam-judul" className="px-5 py-14">
       <Reveal className="mx-auto max-w-[28rem] text-center">
+        <div className="mb-8 flex justify-center" aria-hidden>
+          <Ornamen3D />
+        </div>
         <p
           id="salam-judul"
           className="font-display text-display-md italic text-accent-deep"

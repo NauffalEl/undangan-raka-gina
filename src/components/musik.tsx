@@ -2,23 +2,15 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
+import { cn } from "@/lib/utils";
 import { Musik, Sunyi, PanahBawah } from "./icons";
-import { Tombol, Chip } from "./ui";
+import { Tombol, Chip, Kelopak } from "./ui";
 
 type MusikState = "idle" | "armed" | "playing" | "needs-tap" | "error";
 
 const VOL_AWAL = 0.4;
 const DUR_FADE = 800;
 
-/**
- * Musik latar — GESTURE-ONLY. Nol atribut autoplay, nol trik muted-lalu-unmute
- * (spec-halaman §0 / PRD §0).
- *
- * Alur: coba play() saat mount → sukses = playing; NotAllowedError = armed
- * (listener document sekali: pointerdown/touchstart/keydown/scroll) → gesture
- * pertama = playing; gagal lagi = needs-tap. Tombol "Buka Undangan" +
- * scroll ke #salam = fallback yang selalu ada, terutama di in-app WA.
- */
 function useMusik(src: string) {
   const ref = useRef<HTMLAudioElement | null>(null);
   const [state, setState] = useState<MusikState>("idle");
@@ -26,7 +18,6 @@ function useMusik(src: string) {
   const [pending, setPending] = useState(false);
   const fadeRef = useRef<number | null>(null);
 
-  // Fade volume 0 → 0.4 selama 800ms (kompositor-friendly; hindari hentakan).
   const fadeIn = useCallback((el: HTMLAudioElement) => {
     el.volume = 0;
     if (fadeRef.current) cancelAnimationFrame(fadeRef.current);
@@ -44,7 +35,6 @@ function useMusik(src: string) {
     fadeRef.current = requestAnimationFrame(tick);
   }, []);
 
-  // 1. Satu elemen <audio> di-share, dibuat sekali di client.
   useEffect(() => {
     const el = new Audio(src);
     el.loop = true;
@@ -62,7 +52,6 @@ function useMusik(src: string) {
     };
   }, [src]);
 
-  // 2. Coba play() saat mount — berhasil di sebagian desktop/Android lama.
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
@@ -85,7 +74,6 @@ function useMusik(src: string) {
     };
   }, [fadeIn]);
 
-  // 3. Armed → pasang listener document SEKALI; gesture pertama = play.
   useEffect(() => {
     if (state !== "armed") return;
     const el = ref.current;
@@ -114,7 +102,6 @@ function useMusik(src: string) {
     };
   }, [state, fadeIn]);
 
-  // 4. Visibility — pause saat hidden, resume kalau playing & tidak senyap.
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
@@ -129,13 +116,11 @@ function useMusik(src: string) {
     return () => document.removeEventListener("visibilitychange", onVis);
   }, [state, senyap]);
 
-  // 5. Pemicu manual (tombol "Buka Undangan" / unmute FAB).
   const mulai = useCallback(async () => {
     const el = ref.current;
     if (!el) return false;
     setPending(true);
     try {
-      // iOS Safari: pastikan metadata siap sebelum play().
       if (el.readyState === 0) el.load();
       fadeIn(el);
       await el.play();
@@ -156,7 +141,6 @@ function useMusik(src: string) {
     el.muted = next;
     setSenyap(next);
     if (!next) {
-      // Unmute = user gesture → boleh play.
       try {
         if (el.readyState === 0) el.load();
         await el.play();
@@ -169,76 +153,6 @@ function useMusik(src: string) {
   return { state, senyap, pending, mulai, toggleSenyap };
 }
 
-export function MusikLatar({
-  src = "/musik.mp3",
-  targetScroll = "#salam",
-}: {
-  src?: string;
-  targetScroll?: string;
-}) {
-  const { state, senyap, pending, mulai, toggleSenyap } = useMusik(src);
-  const sudahBuka = state === "playing";
-
-  const bukaUndangan = async () => {
-    const ok = await mulai();
-    if (ok) {
-      document.querySelector(targetScroll)?.scrollIntoView({ behavior: "smooth" });
-    }
-  };
-
-  return (
-    <>
-      {/* Tombol Buka Undangan — primary lg (52px, pill), accent-lite + tinta = 8.76 AAA */}
-      {!sudahBuka && (
-        <Tombol
-          variant="primary"
-          size="lg"
-          loading={pending}
-          onClick={bukaUndangan}
-          className="w-full max-w-xs shadow-[var(--ring-gold)]"
-          aria-label="Buka undangan dan putar musik"
-        >
-          {pending ? "Membuka…" : "Buka Undangan"}
-        </Tombol>
-      )}
-
-      {/* Indikator "musik belum start" — hanya di armed/needs-tap/error */}
-      {!sudahBuka && state !== "error" && (
-        <Chip tone="netral" className="pop-in">
-          <Musik className="h-3.5 w-3.5" /> Ketuk di mana pun untuk memutar musik
-        </Chip>
-      )}
-      {state === "error" && (
-        <Chip tone="netral" className="pop-in">
-          <Sunyi className="h-3.5 w-3.5" /> Musik tidak tersedia
-        </Chip>
-      )}
-
-      {/* Screen reader: umumkan sekali saat status berubah besar */}
-      <p className="sr-only" aria-live="polite">
-        {sudahBuka
-          ? senyap
-            ? "Musik dimatikan"
-            : "Musik diputar"
-          : ""}
-      </p>
-
-      {/* FAB mute — HANYA setelah musik pernah main */}
-      {sudahBuka && (
-        <button
-          type="button"
-          onClick={toggleSenyap}
-          aria-label={senyap ? "Nyalakan musik" : "Matikan musik"}
-          aria-pressed={senyap}
-          className="fab-in fixed right-4 bottom-4 z-50 grid h-12 w-12 place-items-center rounded-full bg-white/90 text-accent-deep shadow-[var(--shadow-fab)] backdrop-blur transition-[transform,background-color] duration-[220ms] hover:bg-white active:scale-95"
-        >
-          {senyap ? <Sunyi /> : <Musik />}
-        </button>
-      )}
-    </>
-  );
-}
-
 export function Cover({
   nama = "Raka & Gina",
   tanggal = "20 . 12 . 2026",
@@ -249,31 +163,160 @@ export function Cover({
   hero?: string;
 }) {
   const [pria, , wanita] = nama.split(" ");
+  const { state, senyap, pending, mulai, toggleSenyap } = useMusik("/musik.mp3");
+  const sudahBuka = state === "playing";
+
+  // Curtain reveal state
+  const [opening, setOpening] = useState(false);
+  const [revealed, setRevealed] = useState(false);
+
+  // Parallax + tilt refs
+  const frameRef = useRef<HTMLDivElement | null>(null);
+  const [tiltEnabled, setTiltEnabled] = useState(false);
+
+  // Detect pointer:fine for tilt (desktop only)
+  useEffect(() => {
+    const mq = window.matchMedia("(pointer: fine)");
+    setTiltEnabled(mq.matches);
+  }, []);
+
+  // Parallax scroll: foto translateY(scrollY * 0.06), bingkai * 0.03
+  useEffect(() => {
+    const frame = frameRef.current;
+    if (!frame) return;
+    let raf = 0;
+    const onScroll = () => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        const y = window.scrollY;
+        frame.style.setProperty("--py", `${y * 0.06}px`);
+        frame.style.setProperty("--py-bg", `${y * 0.03}px`);
+      });
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      cancelAnimationFrame(raf);
+    };
+  }, []);
+
+  // Tilt pointer (±4° hero saja, desktop only)
+  useEffect(() => {
+    if (!tiltEnabled) return;
+    const frame = frameRef.current;
+    if (!frame) return;
+    const onMove = (e: PointerEvent) => {
+      const rect = frame.getBoundingClientRect();
+      const cx = rect.left + rect.width / 2;
+      const cy = rect.top + rect.height / 2;
+      const dx = (e.clientX - cx) / rect.width;
+      const dy = (e.clientY - cy) / rect.height;
+      frame.style.setProperty("--tilt-x", `${Math.max(-4, Math.min(4, dy * 4))}deg`);
+      frame.style.setProperty("--tilt-y", `${Math.max(-4, Math.min(4, -dx * 4))}deg`);
+    };
+    const onLeave = () => {
+      frame.style.setProperty("--tilt-x", "0deg");
+      frame.style.setProperty("--tilt-y", "0deg");
+    };
+    frame.addEventListener("pointermove", onMove);
+    frame.addEventListener("pointerleave", onLeave);
+    return () => {
+      frame.removeEventListener("pointermove", onMove);
+      frame.removeEventListener("pointerleave", onLeave);
+    };
+  }, [tiltEnabled]);
+
+  const bukaUndangan = async () => {
+    if (opening) return;
+    setOpening(true);
+    void mulai();
+    // Curtain 900ms lalu scroll ke #salam
+    setTimeout(() => {
+      setRevealed(true);
+      document.querySelector("#salam")?.scrollIntoView({ behavior: "smooth" });
+    }, 880);
+  };
+
   return (
     <section
       id="cover"
       aria-labelledby="cover-title"
       className="relative isolate min-h-[92svh] overflow-hidden"
     >
-      <Image
-        src={hero}
-        alt={`${nama} — foto sampul undangan`}
-        fill
-        priority
-        sizes="100vw"
-        className="-z-10 object-cover"
-      />
+      {/* Curtain panels — 2 lapis split-screen */}
+      {!revealed && (
+        <div className="absolute inset-0 z-0" aria-hidden>
+          <div
+            className={cn(
+              "absolute inset-x-0 top-0 h-1/2 bg-[var(--bg)]",
+              opening && "curtain-up"
+            )}
+          />
+          <div
+            className={cn(
+              "absolute inset-x-0 bottom-0 h-1/2 bg-[var(--surface-warm)]",
+              opening && "curtain-down"
+            )}
+          />
+        </div>
+      )}
+
+      {/* Hero-stage: 3 lapis frame + float + parallax + tilt */}
+      <div
+        ref={frameRef}
+        className="hero-stage relative z-10 mx-auto flex min-h-[92svh] max-w-[28rem] flex-col items-center justify-center gap-5 px-5 py-10"
+        style={{
+          perspective: "1000px",
+          transform: "rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg)) translateY(var(--py, 0px))",
+          transformStyle: "preserve-3d",
+        }}
+      >
+        {/* Layer a: bingkai belakang bronze-deep translateZ(-24px) scale(1.03) */}
+        <div
+          aria-hidden
+          className="absolute top-1/2 left-1/2 h-72 w-56 -translate-x-1/2 -translate-y-1/2 rounded-[var(--radius-arch)] bg-[var(--color-bronze-deep)] opacity-60"
+          style={{ transform: "translate(-50%, -50%) translateZ(-24px) scale(1.03) translateY(var(--py-bg, 0px))" }}
+        />
+        {/* Layer b: bingkai tengah accent-line translateZ(-12px) */}
+        <div
+          aria-hidden
+          className="absolute top-1/2 left-1/2 h-72 w-56 -translate-x-1/2 -translate-y-1/2 rounded-[var(--radius-arch)] bg-[var(--color-accent-line)] opacity-40"
+          style={{ transform: "translate(-50%, -50%) translateZ(-12px) scale(1.01) translateY(var(--py-bg, 0px))" }}
+        />
+        {/* Layer c: foto translateZ(0) + float-soft */}
+        <div
+          className="float-soft relative h-72 w-56 overflow-hidden rounded-[var(--radius-arch)] border border-accent-line shadow-[var(--shadow-lg)]"
+          style={{ transform: "translateZ(0)" }}
+        >
+          <Image
+            src={hero}
+            alt={`${nama} — foto sampul undangan`}
+            fill
+            priority
+            sizes="(max-width: 640px) 224px, 224px"
+            className="object-cover"
+          />
+          <div aria-hidden className="absolute inset-0 shadow-[var(--inset-hairline)]" />
+        </div>
+
+        {/* Kelopak bunga jatuh hero (max 8) */}
+        <Kelopak jumlah={8} area="hero" />
+      </div>
+
+      {/* Overlay gradien bawah */}
       <div
         aria-hidden
-        className="absolute inset-0 -z-10 bg-gradient-to-b from-white/85 via-white/70 to-[var(--bg)]"
+        className="absolute inset-0 z-20 bg-gradient-to-b from-white/85 via-white/70 to-[var(--bg)]"
       />
-      <div className="mx-auto flex min-h-[92svh] max-w-[28rem] flex-col items-center justify-center gap-5 px-5 py-10 text-center">
+
+      {/* Konten: nama, tanggal, tombol */}
+      <div className="relative z-30 mx-auto flex min-h-[92svh] max-w-[28rem] flex-col items-center justify-center gap-5 px-5 py-10 text-center">
         <p className="text-eyebrow font-semibold text-accent-deep uppercase">
           Save the date
         </p>
         <h1
           id="cover-title"
-          className="font-display text-display-2xl font-semibold sm:text-display-2xl-up"
+          className="gold-shimmer font-display text-display-2xl font-semibold sm:text-display-2xl-up"
         >
           {pria} <span className="text-accent">&amp;</span> {wanita}
         </h1>
@@ -281,14 +324,55 @@ export function Cover({
           {tanggal}
         </p>
         <div className="mt-2 flex flex-col items-center gap-3">
-          <MusikLatar />
-          <p className="max-w-xs text-caption text-ink-soft">
-            Ketuk tombol di atas untuk membuka undangan &amp; memutar musik
+          {!sudahBuka && (
+            <Tombol
+              variant="primary"
+              size="lg"
+              loading={pending}
+              onClick={bukaUndangan}
+              className="w-full max-w-xs shadow-[var(--ring-gold)]"
+              aria-label="Buka undangan dan putar musik"
+            >
+              {pending ? "Membuka…" : "Buka Undangan"}
+            </Tombol>
+          )}
+
+          {!sudahBuka && state !== "error" && (
+            <Chip tone="netral" className="pop-in">
+              <Musik className="h-3.5 w-3.5" /> Ketuk di mana pun untuk memutar musik
+            </Chip>
+          )}
+
+          {state === "error" && (
+            <Chip tone="netral" className="pop-in">
+              <Sunyi className="h-3.5 w-3.5" /> Musik tidak tersedia
+            </Chip>
+          )}
+
+          <p className="sr-only" aria-live="polite">
+            {sudahBuka
+              ? senyap
+                ? "Musik dimatikan"
+                : "Musik diputar"
+              : ""}
           </p>
+
+          {sudahBuka && (
+            <button
+              type="button"
+              onClick={toggleSenyap}
+              aria-label={senyap ? "Nyalakan musik" : "Matikan musik"}
+              aria-pressed={senyap}
+              className="fab-in fixed right-4 bottom-4 z-50 grid h-12 w-12 place-items-center rounded-full bg-white/90 text-accent-deep shadow-[var(--shadow-fab)] backdrop-blur transition-[transform,background-color] duration-[220ms] hover:bg-white active:scale-95"
+            >
+              {senyap ? <Sunyi /> : <Musik />}
+            </button>
+          )}
+
+          <span aria-hidden className="mt-4 text-accent-deep">
+            <PanahBawah className="h-6 w-6 animate-bounce" />
+          </span>
         </div>
-        <span aria-hidden className="mt-4 text-accent-deep">
-          <PanahBawah className="h-6 w-6 animate-bounce" />
-        </span>
       </div>
     </section>
   );

@@ -1,6 +1,6 @@
 "use client";
 
-import { Pin, Kalender, Ornamen } from "./icons";
+import { Pin, Kalender, Ornamen3D } from "./icons";
 import { Reveal, Tombol, TombolAnchor } from "./ui";
 import { tautanKalender } from "@/lib/utils";
 import type { Acara } from "@/lib/utils";
@@ -16,7 +16,7 @@ function KartuAcara({
   const kalUrl = tautanKalender({ ...acara, nama: acara.nama }, pasangan);
 
   return (
-    <article className="flex w-full flex-col gap-3 rounded-lg border border-line bg-surface p-5 shadow-[var(--inset-hairline),var(--shadow-md)]">
+    <article className="tilt-in flex w-full flex-col gap-3 rounded-lg border border-line bg-surface p-5 shadow-[var(--inset-hairline),var(--shadow-md)]">
       <span className="text-eyebrow font-semibold text-accent-deep uppercase">
         {acara.jenis ?? acara.nama}
       </span>
@@ -67,7 +67,7 @@ function KartuAcara({
   );
 }
 
-/** Rangkaian Acara — kartu Akad + Resepsi. */
+/** Rangkaian Acara — kartu Akad + Resepsi, rise-3d + divider ornamen 3D. */
 export function RangkaianAcara({
   acara,
   pasangan,
@@ -80,7 +80,7 @@ export function RangkaianAcara({
     <section id="acara" aria-labelledby="acara-judul" className="px-5 py-14">
       <Reveal className="mx-auto max-w-[48rem]">
         <div className="mb-8 flex justify-center" aria-hidden>
-          <Ornamen />
+          <Ornamen3D />
         </div>
         <h2
           id="acara-judul"
@@ -89,8 +89,8 @@ export function RangkaianAcara({
           Rangkaian Acara
         </h2>
         <div className="mt-8 grid grid-cols-1 items-stretch gap-4 md:grid-cols-2">
-          {acara.map((a) => (
-            <Reveal key={a.nama} as="div">
+          {acara.map((a, i) => (
+            <Reveal key={a.nama} delay={i * 70}>
               <KartuAcara acara={a} pasangan={pasangan} />
             </Reveal>
           ))}
