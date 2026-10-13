@@ -145,6 +145,40 @@ body {
   line-height: 1.65;
   overflow-x: hidden;
 }
+
+/* ── Background estetis v4 ── 3 layer fixed: porcelain gradient + floral motif + vignette + gold shimmer */
+body::before,
+body::after,
+body > .bg-fx {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* Layer 1: porcelain gradient (krem → blush tipis hangat) */
+body::before {
+  content: "";
+  background:
+    radial-gradient(1100px 700px at 50% -8%, rgba(176, 137, 90, 0.09), transparent 62%),
+    radial-gradient(900px 520px at 88% 96%, rgba(176, 137, 90, 0.07), transparent 60%),
+    linear-gradient(178deg, #FDFBF6 0%, var(--bg) 34%, #F7F1E6 72%, #F1E9DA 100%);
+}
+
+/* Layer 3: vignette biar section lebih "dinyalakan" — map tingkat bawah */
+body::after {
+  content: "";
+  background:
+    radial-gradient(130% 95% at 50% 48%, transparent 52%, rgba(46, 31, 20, 0.055) 100%);
+}
+
+/* Layer 2: motif bunga SVG tile (inline data URI — bisa diwarnai), opacity rendah */
+.bg-fx {
+  opacity: 0.5;
+  background-image: var(--bg-floral);
+  background-size: 168px 168px;
+  background-repeat: repeat;
+}
 .font-display { font-family: var(--font-display); }
 .font-body { font-family: var(--font-body); }
 
