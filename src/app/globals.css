@@ -35,6 +35,10 @@
   --color-sage-deep: #364539;
   --color-veil: rgba(46, 31, 20, 0.92);
 
+  /* V3 ornate */
+  --ornate-silver: #C0C0C0;
+  --ivory: #FFFFF0;
+
   --font-display: var(--font-cormorant), Georgia, serif;
   --font-body: var(--font-jakarta), system-ui, sans-serif;
   --radius-xs: 4px;
@@ -77,6 +81,11 @@
   --ease-float: cubic-bezier(.4,0,.2,1);
   --perspective-hero: 1000px;
   --perspective-card: 900px;
+
+  /* V3 shape tokens */
+  --corner-radius: 24px;
+  --arch-radius: 16px;
+  --polaroid-border: 4px;
 }
 
 /* Alias var v1 (scaffold) — TIDAK dihapus */
@@ -116,6 +125,11 @@
   --dur-reveal: 600ms;
   --reveal-shift: 16px;
   --stagger: 60ms;
+  --ornate-silver: #C0C0C0;
+  --ivory: #FFFFF0;
+  --corner-radius: 24px;
+  --arch-radius: 16px;
+  --polaroid-border: 4px;
 }
 
 html {
@@ -273,7 +287,6 @@ body {
   50% { transform: rotateX(-90deg); }
 }
 .flip-num { animation: flip-num var(--dur-flip) var(--ease-soft-out) both; }
-
 @keyframes stagger-pop {
   from { transform: scale(.92) translateY(10px); opacity: 0; }
   to { transform: scale(1) translateY(0); opacity: 1; }
@@ -302,7 +315,6 @@ body {
   to { transform: scale(1) translateZ(0) rotateX(0deg); opacity: 1; }
 }
 .zoom-3d { animation: zoom-3d var(--dur-zoom3d) var(--ease-soft-out) both; }
-
 @keyframes curtain-up {
   from { transform: translateY(0) translateZ(0); }
   to { transform: translateY(-100%) translateZ(40px); }
@@ -340,7 +352,221 @@ html[data-paused="1"] .skeleton {
 }
 
 /* ============================================================
-   reduce-motion: SEMUA animasi/3D mati, konten tetap terlihat
+   V3 — BINGKAI FOTO (CLIP SHAPE)
+   ============================================================ */
+
+/* Hero: 4:5 portrait, corner di-clip + corner flourish SVG 4 rotasi */
+.framed-hero {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  object-position: center;
+  clip-path: inset(0 round var(--corner-radius));
+}
+/* Bingkai 3D hero: sisi belakang bronze-deep + sisi tengah gold-hi */
+.framed-hero-back {
+  position: absolute;
+  inset: 0;
+  border-radius: var(--corner-radius);
+  background: var(--color-bronze-deep);
+  opacity: 0.55;
+}
+.framed-hero-mid {
+  position: absolute;
+  inset: 0;
+  border-radius: var(--corner-radius);
+  background: var(--color-gold-hi);
+  opacity: 0.35;
+  padding: 8px;
+}
+.framed-hero-mid::before {
+  content: "";
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 18px;
+  border: 1px solid var(--color-gold-hi);
+  background: transparent;
+}
+/* Ring dalam tipis di atas foto */
+.framed-hero-ring {
+  position: absolute;
+  inset: 10px;
+  border: 1px solid var(--color-accent-line);
+  border-radius: 16px;
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* Profil: 4:5 arch, border-radius elliptik (Safari-safe) — bukan clip-path */
+.framed-arch {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  object-position: center;
+  border-radius: 50% 50% var(--arch-radius) var(--arch-radius) / 34% 34% var(--arch-radius) var(--arch-radius);
+  overflow: hidden;
+}
+.framed-arch-ring {
+  position: absolute;
+  inset: 8px;
+  border: 1px solid var(--color-gold-hi);
+  border-radius: 46% 46% 12px 12px / 30% 30% 12px 12px;
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* Galeri: 4:5 portrait polaroid + caption strip */
+.framed-polaroid {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  object-position: center;
+  clip-path: inset(0);
+  border-radius: var(--polaroid-border);
+}
+/* Caption strip polaroid */
+.polaroid-caption {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--ivory);
+  padding: 8px 12px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  text-align: center;
+  letter-spacing: 0.02em;
+}
+
+/* ============================================================
+   V3 — KARTU DEKORATIF
+   ============================================================ */
+
+/* Kartu acara: double-line border + 4 corner flourish */
+.card-double-corner {
+  position: relative;
+  background: var(--surface);
+  border: 1px solid var(--color-gold-hi);
+  outline: 1px solid var(--color-bronze);
+  outline-offset: 4px;
+  border-radius: var(--radius-md);
+}
+.card-double-corner::before {
+  content: "";
+  position: absolute;
+  inset: 3px;
+  border: 1px solid var(--color-accent-line);
+  border-radius: var(--radius-sm);
+  pointer-events: none;
+}
+/* Corner flourish positioning (di-set inline per instance) */
+.card-corner-flourish {
+  position: absolute;
+  z-index: 10;
+  color: var(--color-gold-hi);
+  filter: drop-shadow(0 1px 2px rgba(95, 73, 21, 0.25));
+}
+.card-corner-flourish.tl { top: -8px; left: -8px; }
+.card-corner-flourish.tr { top: -8px; right: -8px; transform: scaleX(-1); }
+.card-corner-flourish.bl { bottom: -8px; left: -8px; transform: scaleY(-1); }
+.card-corner-flourish.br { bottom: -8px; right: -8px; transform: scale(-1, -1); }
+
+/* Countdown box: emas rounded 2 layer */
+.countdown-gold-frame {
+  position: relative;
+  border-radius: 12px;
+  background: var(--surface);
+  border: 1px solid var(--color-accent-line);
+}
+.countdown-gold-frame::before {
+  content: "";
+  position: absolute;
+  inset: -5px -4px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, var(--color-gold-hi) 0%, var(--color-bronze) 100%);
+  z-index: -1;
+  opacity: 0.5;
+  transform: translateZ(-4px);
+}
+
+/* Amplop: lipatan segitiga + tape strip */
+.envelope-frame {
+  position: relative;
+  background: var(--surface);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-md);
+  padding: 18px 16px 16px;
+}
+.envelope-frame::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 44px;
+  background: linear-gradient(to bottom, var(--color-surface-warm), var(--surface));
+  clip-path: polygon(0 0, 50% 100%, 100% 0);
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+  border-bottom: 1px dashed var(--color-line-strong);
+}
+.envelope-tape {
+  position: absolute;
+  top: -8px;
+  right: 14px;
+  width: 52px;
+  height: 22px;
+  background: var(--color-accent-line);
+  opacity: 0.7;
+  border-radius: 2px;
+  transform: rotate(-4deg);
+  z-index: 5;
+  box-shadow: 0 1px 3px rgba(46, 31, 20, 0.12);
+}
+.envelope-tape::before,
+.envelope-tape::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 6px;
+  background: repeating-linear-gradient(
+    45deg,
+    transparent 0,
+    transparent 2px,
+    rgba(255, 255, 255, 0.5) 2px,
+    rgba(255, 255, 255, 0.5) 4px
+  );
+}
+.envelope-tape::before { left: 0; }
+.envelope-tape::after { right: 0; }
+
+/* Love story node: diamond + ring */
+.love-node {
+  position: relative;
+  width: 14px;
+  height: 14px;
+  background: var(--color-gold-hi);
+  border: 2px solid var(--color-bronze);
+  transform: rotate(45deg);
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+.love-node::after {
+  content: "";
+  position: absolute;
+  inset: -6px;
+  border: 1px solid var(--color-accent-line);
+  border-radius: 50%;
+  transform: rotate(-45deg);
+}
+
+/* ============================================================
+   REDUCE-MOTION v3: ornamen mati, bingkai tetap
    ============================================================ */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
@@ -378,6 +604,12 @@ html[data-paused="1"] .skeleton {
   }
   .hero-stage, .countdown-3d, .polaroid, .tilt-in, .frame-3d { perspective: none !important; }
   .preserve-3d { transform-style: flat !important; }
+  /* V3: ornamen SVG mati, bingkai border/clip-path tetap */
+  .card-corner-flourish,
+  .envelope-tape,
+  .love-node::after,
+  .framed-hero-ring,
+  .framed-arch-ring { display: none !important; }
 }
 
 ::-webkit-scrollbar { width: 6px; height: 6px; }

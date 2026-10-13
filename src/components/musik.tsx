@@ -5,6 +5,7 @@ import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { Musik, Sunyi, PanahBawah } from "./icons";
 import { Tombol, Chip, Kelopak } from "./ui";
+import { FramedImage } from "./ui";
 
 type MusikState = "idle" | "armed" | "playing" | "needs-tap" | "error";
 
@@ -271,33 +272,15 @@ export function Cover({
           transformStyle: "preserve-3d",
         }}
       >
-        {/* Layer a: bingkai belakang bronze-deep translateZ(-24px) scale(1.03) */}
-        <div
-          aria-hidden
-          className="absolute top-1/2 left-1/2 h-72 w-56 -translate-x-1/2 -translate-y-1/2 rounded-[var(--radius-arch)] bg-[var(--color-bronze-deep)] opacity-60"
-          style={{ transform: "translate(-50%, -50%) translateZ(-24px) scale(1.03) translateY(var(--py-bg, 0px))" }}
+        {/* V3: FramedImage deco-barok — hero 4:5 portrait, corner flourish 4 arah, 3 lapis 3D */}
+        <FramedImage
+          src={hero}
+          alt={`${nama} — foto sampul undangan`}
+          variant="deco-barok"
+          priority
+          sizes="(max-width: 640px) 224px, 224px"
+          className="float-soft h-72 w-56"
         />
-        {/* Layer b: bingkai tengah accent-line translateZ(-12px) */}
-        <div
-          aria-hidden
-          className="absolute top-1/2 left-1/2 h-72 w-56 -translate-x-1/2 -translate-y-1/2 rounded-[var(--radius-arch)] bg-[var(--color-accent-line)] opacity-40"
-          style={{ transform: "translate(-50%, -50%) translateZ(-12px) scale(1.01) translateY(var(--py-bg, 0px))" }}
-        />
-        {/* Layer c: foto translateZ(0) + float-soft */}
-        <div
-          className="float-soft relative h-72 w-56 overflow-hidden rounded-[var(--radius-arch)] border border-accent-line shadow-[var(--shadow-lg)]"
-          style={{ transform: "translateZ(0)" }}
-        >
-          <Image
-            src={hero}
-            alt={`${nama} — foto sampul undangan`}
-            fill
-            priority
-            sizes="(max-width: 640px) 224px, 224px"
-            className="object-cover"
-          />
-          <div aria-hidden className="absolute inset-0 shadow-[var(--inset-hairline)]" />
-        </div>
 
         {/* Kelopak bunga jatuh hero (max 8) */}
         <Kelopak jumlah={8} area="hero" />
@@ -318,7 +301,7 @@ export function Cover({
           id="cover-title"
           className="gold-shimmer font-display text-display-2xl font-semibold sm:text-display-2xl-up"
         >
-          {pria} <span className="text-accent">&amp;</span> {wanita}
+          {pria} <span className="text-accent">&</span> {wanita}
         </h1>
         <p className="font-display text-display-sm text-ink-soft tabular-nums">
           {tanggal}

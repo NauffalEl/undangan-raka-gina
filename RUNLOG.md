@@ -17,3 +17,7 @@
 | 2026-10-13 00:14 | Review user: kurang ramai + kurang animasi + tambah 3D | Bima | Revisi v2 dimulai |
 | 2026-10-13 00:16 | Desain v2 selesai | Sinta | design-system-v2.md (296 baris) + spec-halaman-v2.md (244 baris). Efek 3D CSS-only, tanpa Three.js/WebGL |
 | 2026-10-13 00:17 | Delegasi implementasi v2 | Raka | 8 file, build harus hijau. Berjalan background... |
+| 2026-10-13 01:22 | Undeploy preview v2 | Bima | Cloudflare logout, wrangler.jsonc dihapus |
+| 2026-10-13 01:25 | Review user: kurang bingkai + shape foto | Bima | Revisi v3 dimulai |
+| 2026-10-13 01:28 | Desain v3 selesai | Sinta | design-system-v3.md (316 baris). Bingkai ornate + clip shape, max 4 layer, LCP <2.5s |
+| 2026-10-13 01:29 | Delegasi implementasi v3 | Raka | Bingkai + shape foto. Berjalan background... |

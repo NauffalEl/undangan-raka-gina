@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { Reveal, Chip, Kelopak } from "./ui";
+import { Reveal, Chip, Kelopak, FramedImage, TapeStrip, CornerFlourish } from "./ui";
 import { Instagram, Ornamen3D } from "./icons";
 import type { Undangan } from "@/lib/utils";
 
@@ -25,33 +25,23 @@ function KartuMempelai({
 
   return (
     <article className="tilt-in flex flex-col items-center gap-4 text-center">
-      {/* Foto arch: float-soft + frame 3D ringan 2 lapis */}
+      {/* V3: arch/topeng — 4:5 border-radius elliptik (Safari-safe) + bronze di belakang
+          + ornate ring + corner flourish. Foto di-clip (object-fit:cover), bukan stretch. */}
       <div className="hero-stage relative" style={{ perspective: "900px" }}>
-        {/* Lapis belakang (bronze) */}
-        <div
-          aria-hidden
-          className="absolute inset-0 translate-x-1 translate-y-1 rounded-[var(--radius-arch)] bg-[var(--color-bronze)] opacity-50"
-          style={{ transform: "translateZ(-12px) translate(6px, 6px)" }}
+        <FramedImage
+          src={foto}
+          alt={nama}
+          variant="arch"
+          ratio="arch"
+          sizes="(max-width:640px) 176px, 208px"
+          className="float-soft h-56 w-44 sm:h-64 sm:w-48"
         />
-        <div
-          className="float-soft relative h-52 w-40 overflow-hidden border border-accent-line bg-surface-warm shadow-md sm:h-60 sm:w-48"
-          style={{ borderRadius: "var(--radius-arch)", transform: "translateZ(0)" }}
+        <span
+          aria-hidden
+          className="pointer-events-none absolute inset-0 -z-10 grid place-items-center font-display text-4xl text-ink-muted"
         >
-          <Image
-            src={foto}
-            alt={nama}
-            fill
-            sizes="(max-width:640px) 160px, 192px"
-            loading="lazy"
-            className="object-cover"
-          />
-          <span
-            aria-hidden
-            className="absolute inset-0 -z-10 grid place-items-center font-display text-4xl text-ink-muted"
-          >
-            {inisial}
-          </span>
-        </div>
+          {inisial}
+        </span>
       </div>
       <Reveal delay={80}>
         <div>
@@ -102,8 +92,16 @@ export function Mempelai({ data }: { data: Undangan }) {
             sosmed={data.sosmed?.pria}
             label="Mempelai Pria"
           />
-          <div aria-hidden className="flex justify-center font-display text-display-md text-accent">
-            &
+          <div aria-hidden className="flex flex-col items-center justify-center gap-2 text-accent">
+            <span className="relative block">
+              <TapeStrip pos="left" className="-top-2 -left-5" />
+              <TapeStrip pos="right" className="-top-2 -right-5" />
+              <span className="relative block">
+                <CornerFlourish pos="tl" size={18} className="text-[var(--color-gold-hi)]" />
+                <CornerFlourish pos="br" size={18} className="text-[var(--color-gold-hi)]" />
+                <span className="font-display text-display-md">&</span>
+              </span>
+            </span>
           </div>
           <KartuMempelai
             nama={wanita}

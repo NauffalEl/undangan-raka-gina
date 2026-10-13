@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { Ornamen } from "./icons";
 
@@ -302,6 +303,310 @@ export function ErrorState({ onRetry }: { onRetry: () => void }) {
       <Tombol variant="danger" size="sm" onClick={onRetry} className="mt-3">
         Coba lagi
       </Tombol>
+    </div>
+  );
+}
+
+/* ============================================================
+   V3 — ORNAMEN SVG INLINE (currentColor, tanpa file external)
+   ============================================================ */
+
+/** Corner flourish: kembang barok di 1 sudut, di-rotate 0/90/180/270. */
+export function CornerFlourish({
+  pos = "tl",
+  size = 40,
+  className,
+}: {
+  pos?: "tl" | "tr" | "bl" | "br";
+  size?: number;
+  className?: string;
+}) {
+  const rot = { tl: 0, tr: 90, br: 180, bl: 270 }[pos];
+  return (
+    <svg
+      viewBox="0 0 40 40"
+      width={size}
+      height={size}
+      fill="currentColor"
+      aria-hidden
+      focusable="false"
+      className={cn("pointer-events-none absolute", className)}
+      style={{
+        transform: `rotate(${rot}deg)`,
+        top: pos[0] === "t" ? -2 : undefined,
+        bottom: pos[0] === "b" ? -2 : undefined,
+        left: pos[1] === "l" ? -2 : undefined,
+        right: pos[1] === "r" ? -2 : undefined,
+      }}
+    >
+      {/* Kembang + daun roll, berpusat di sudut kiri-atas */}
+      <path d="M2 2c0 8 4 14 12 16-5 1-9 4-11 9 6-3 12-3 18 0-3-6-3-12 0-18C16 6 9 4 2 2z" />
+      <path d="M20 6c4 0 7 3 7 7 0-4-3-7-7-7z" />
+      <path d="M6 20c0 4 3 7 7 7-4 0-7-3-7-7z" />
+      <circle cx="24" cy="3" r="1.6" />
+      <circle cx="3" cy="24" r="1.6" />
+    </svg>
+  );
+}
+
+/**
+ * OrnateDivider — divider section 2 lapis:
+ * depan (solid) + belakang (bronze, blur, translateZ di bawah).
+ */
+export function OrnateDivider({ className, size = "md" }: { className?: string; size?: "sm" | "md" | "lg" }) {
+  const w = { sm: 100, md: 140, lg: 180 }[size];
+  const paths = (
+    <>
+      <path d="M0 12h52M84 12h52" />
+      <path d="M68 3c4.5 5 4.5 11 0 16-4.5-5-4.5-11 0-16z" />
+      <path d="M68 8.5c2.5 1.8 2.5 5.2 0 7-2.5-1.8-2.5-5.2 0-7z" />
+      <circle cx="44" cy="12" r="2.4" />
+      <circle cx="92" cy="12" r="2.4" />
+      <path d="M36 9l2 3-2 3-2-3 2-3z" />
+      <path d="M100 9l2 3-2 3-2-3 2-3z" />
+    </>
+  );
+  return (
+    <span
+      className={cn("relative inline-block shrink-0 align-middle", className)}
+      style={{ width: w, height: 24 }}
+      aria-hidden
+    >
+      {/* Lapis belakang: bronze, blur, sedikit turun — depth */}
+      <svg
+        viewBox="0 0 136 24"
+        className="absolute inset-0 text-[var(--color-bronze)] opacity-45 blur-[0.6px]"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1"
+        style={{ transform: "translateY(2px)" }}
+        aria-hidden
+      >
+        {paths}
+      </svg>
+      {/* Lapis depan: emas terang */}
+      <svg
+        viewBox="0 0 136 24"
+        className="absolute inset-0 text-[var(--color-accent)]"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1"
+        aria-hidden
+      >
+        {paths}
+      </svg>
+    </span>
+  );
+}
+
+/** Tape strip — selotip kecil dekoratif di sudut polaroid. */
+export function TapeStrip({
+  pos = "left",
+  className,
+}: {
+  pos?: "left" | "right";
+  className?: string;
+}) {
+  return (
+    <span
+      aria-hidden
+      className={cn(
+        "absolute -top-2 h-5 w-14 rounded-[1px] shadow-[0_1px_2px_rgba(46,31,20,.15)]",
+        pos === "left" ? "-left-3 -rotate-[6deg]" : "-right-3 rotate-[6deg]",
+        className,
+      )}
+      style={{
+        background:
+          "linear-gradient(180deg, rgba(247,236,200,.92), rgba(217,190,120,.85))",
+        border: "1px dashed rgba(194,155,68,.55)",
+      }}
+    />
+  );
+}
+
+/**
+ * OrnamenLFramed — ornamen sudut L untuk kartu (2 sudut diagonal),
+ * dipakai FramedCard. currentColor.
+ */
+export function OrnamenLFramed({
+  pos = "tl",
+  size = 28,
+  className,
+}: {
+  pos?: "tl" | "tr" | "bl" | "br";
+  size?: number;
+  className?: string;
+}) {
+  const rot = { tl: 0, tr: 90, br: 180, bl: 270 }[pos];
+  return (
+    <svg
+      viewBox="0 0 28 28"
+      width={size}
+      height={size}
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.4"
+      strokeLinecap="round"
+      aria-hidden
+      focusable="false"
+      className={cn("pointer-events-none absolute", className)}
+      style={{
+        transform: `rotate(${rot}deg)`,
+        top: pos[0] === "t" ? 4 : undefined,
+        bottom: pos[0] === "b" ? 4 : undefined,
+        left: pos[1] === "l" ? 4 : undefined,
+        right: pos[1] === "r" ? 4 : undefined,
+      }}
+    >
+      <path d="M3 25V9a6 6 0 0 1 6-6h16" />
+      <path d="M7 25V11a4 4 0 0 1 4-4h14" opacity=".55" />
+      <circle cx="3" cy="6.5" r="1.6" fill="currentColor" stroke="none" />
+      <circle cx="24.5" cy="3" r="1.6" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
+
+/* ============================================================
+   V3 — WRAPPER BINGKAI FOTO (foto DI-CLIP ke shape, tdk stretch)
+   ============================================================ */
+
+export type BingkaiVariant = "deco-barok" | "arch" | "polaroid";
+export type BingkaiRatio = "4:5" | "arch" | "square";
+
+/**
+ * FramedImage — foto di-clip ke shape:
+ * deco-barok (hero 4:5, corner flourish 4 arah, 3 lapis 3D),
+ * arch (border-radius elliptik Safari-safe), polaroid (4:5 + tape).
+ * Selalu object-fit:cover + object-position:center → crop, bukan stretch.
+ */
+export function FramedImage({
+  src,
+  alt,
+  ratio = "4:5",
+  variant = "deco-barok",
+  sizes,
+  priority = false,
+  className,
+  caption,
+  layer = true,
+}: {
+  src: string;
+  alt: string;
+  ratio?: BingkaiRatio;
+  variant?: BingkaiVariant;
+  sizes?: string;
+  priority?: boolean;
+  className?: string;
+  caption?: string;
+  /** false = hanya foto + clip (pakai untuk area yang sudah punya bingkai sendiri) */
+  layer?: boolean;
+}) {
+  const shape =
+    variant === "arch"
+      ? "framed-arch"
+      : variant === "polaroid"
+        ? "framed-polaroid"
+        : "framed-hero";
+
+  const imgSizes = sizes ?? "(max-width: 640px) 90vw, 400px";
+
+  const foto = (
+    <Image
+      src={src}
+      alt={alt}
+      fill
+      priority={priority}
+      sizes={imgSizes}
+      className="object-cover object-center"
+    />
+  );
+
+  if (!layer) {
+    return (
+      <span className={cn(shape, "block overflow-hidden", className)}>{foto}</span>
+    );
+  }
+
+  if (variant === "deco-barok") {
+    // Hero: 3 lapis — (a) bronze-deep belakang, (b) gold-hi + flourish, (c) foto
+    return (
+      <span className={cn("relative block", className)}>
+        <span aria-hidden className="framed-hero-back" />
+        <span aria-hidden className="framed-hero-mid" />
+        <span className={cn(shape, "relative overflow-hidden")}>
+          {foto}
+          <span aria-hidden className="framed-hero-ring" />
+          <CornerFlourish pos="tl" size={34} className="text-[var(--color-gold-hi)] z-20" />
+          <CornerFlourish pos="tr" size={34} className="text-[var(--color-gold-hi)] z-20" />
+          <CornerFlourish pos="bl" size={34} className="text-[var(--color-gold-hi)] z-20" />
+          <CornerFlourish pos="br" size={34} className="text-[var(--color-gold-hi)] z-20" />
+        </span>
+      </span>
+    );
+  }
+
+  if (variant === "arch") {
+    // Profil: bronze di belakang + ring ornamen di sekeliling
+    return (
+      <span className={cn("relative block", className)}>
+        <span
+          aria-hidden
+          className="absolute inset-0 translate-x-1.5 translate-y-1.5 bg-[var(--color-bronze)] opacity-60"
+          style={{ borderRadius: "50% 50% var(--arch-radius) var(--arch-radius) / 34% 34% var(--arch-radius) var(--arch-radius)" }}
+        />
+        <span className={cn(shape, "relative overflow-hidden")}>
+          {foto}
+          <span aria-hidden className="framed-arch-ring" />
+          <CornerFlourish pos="bl" size={30} className="text-[var(--color-gold-hi)] z-20" />
+          <CornerFlourish pos="br" size={30} className="text-[var(--color-gold-hi)] z-20" />
+        </span>
+      </span>
+    );
+  }
+
+  // polaroid: ivory frame + tape + caption strip
+  return (
+    <span
+      className={cn(
+        "block bg-[var(--ivory)] p-2 pb-8 shadow-[var(--shadow-md)] ring-1 ring-[var(--color-line)]",
+        className,
+      )}
+      style={{ borderRadius: "var(--polaroid-border)" }}
+    >
+      <span className="relative block">
+        <span className={cn(shape, "relative overflow-hidden")}>{foto}</span>
+        <TapeStrip pos="left" />
+        <TapeStrip pos="right" />
+      </span>
+      {caption ? <span className="polaroid-caption">{caption}</span> : null}
+    </span>
+  );
+}
+
+/**
+ * FramedCard — kartu dengan bingkai double-line + corner flourish 4 sudut.
+ * Dipakai kartu acara / section berbingkai.
+ */
+export function FramedCard({
+  children,
+  className,
+  corners = true,
+}: {
+  children: React.ReactNode;
+  className?: string;
+  corners?: boolean;
+}) {
+  return (
+    <div className={cn("card-double-corner", className)}>
+      {corners && (
+        <>
+          <CornerFlourish pos="tl" size={30} className="card-corner-flourish tl" />
+          <CornerFlourish pos="tr" size={30} className="card-corner-flourish tr" />
+          <CornerFlourish pos="bl" size={30} className="card-corner-flourish bl" />
+          <CornerFlourish pos="br" size={30} className="card-corner-flourish br" />
+        </>
+      )}
+      {children}
     </div>
   );
 }

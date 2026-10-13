@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { Ornamen } from "./icons";
-import { Reveal } from "./ui";
+import { Reveal, FramedImage } from "./ui";
 import { cn } from "@/lib/utils";
 
 export type Foto = { src: string; alt: string };
@@ -65,10 +65,11 @@ function PolaroidThumb({
   onClick: () => void;
   isDesktop: boolean;
 }) {
+  // V3: polaroid 4:5 portrait (ivory bg + tape strip) + clip-shape (cover, bukan stretch)
+  const rot = deterministicRotate(index, 111);
+  const delay = index * 70;
+
   if (isDesktop) {
-    // Desktop: polaroid 3D berserakan
-    const rot = deterministicRotate(index, 111);
-    const delay = index * 70; // stagger 70ms
     return (
       <button
         type="button"
@@ -76,32 +77,28 @@ function PolaroidThumb({
         onClick={onClick}
         aria-label={`Foto ${index + 1}`}
         className={cn(
-          "relative group aspect-[4/5] rounded-md border border-line bg-surface-warm",
-          "transition-transform duration-[220ms] hover:translate-z-[16px] hover:rotate-0",
+          "group transition-transform duration-[220ms] hover:rotate-0 hover:translate-z-[16px]",
           "cursor-pointer",
         )}
         style={{
-          "--delay": `${delay}ms`,
           transform: `rotateX(${rot.x}deg) rotateY(${rot.y}deg) rotateZ(${rot.z}deg) translateZ(${rot.zDepth}px)`,
           transitionDelay: `${delay}ms`,
           perspective: "1200px",
         } as React.CSSProperties}
       >
-        <Image
+        <FramedImage
           src={foto.src}
           alt={foto.alt}
-          fill
+          variant="polaroid"
+          ratio="4:5"
+          caption={foto.alt}
           sizes="(max-width:1023px) 50vw, 33vw"
-          loading="lazy"
-          className="object-cover rounded-md"
+          className="aspect-[4/5] w-full"
         />
-        <figcaption className="absolute bottom-0 left-0 right-0 bg-white px-3 py-2 text-center text-micro text-ink-soft">
-          {foto.alt}
-        </figcaption>
       </button>
     );
   }
-  // Mobile: grid 2 kolom rapi, flip 3D saat diklik
+  // Mobile: flip 3D saat diklik lalu buka lightbox
   const [flipped, setFlipped] = useState(false);
   return (
     <button
@@ -109,30 +106,25 @@ function PolaroidThumb({
       role="listitem"
       onClick={() => {
         setFlipped(true);
-        setTimeout(() => onClick(), 190); // 380ms flip total, open halfway
+        setTimeout(() => onClick(), 190);
       }}
       aria-label={`Foto ${index + 1}`}
-      className={cn(
-        "relative group aspect-[4/5] rounded-md border border-line bg-surface-warm",
-        "perspective-[1200px]",
-        flipped && "flip-num", // flip-num keyframe 600ms, using for 380ms? adjust
-      )}
+      className={cn("perspective-[1200px] cursor-pointer", flipped && "flip-num")}
     >
       <div
-        className="relative aspect-[4/5] w-full overflow-hidden rounded-md"
+        className="relative aspect-[4/5] w-full transition-transform duration-[380ms]"
         style={{
           transformStyle: "preserve-3d",
-          transition: "transform 380ms var(--ease-soft-out)",
           transform: flipped ? "rotateY(-90deg)" : "rotateY(0deg)",
         }}
       >
-        <Image
+        <FramedImage
           src={foto.src}
           alt={foto.alt}
-          fill
+          variant="polaroid"
+          ratio="4:5"
+          caption={foto.alt}
           sizes="(max-width:1023px) 50vw, 33vw"
-          loading="lazy"
-          className="object-cover"
         />
       </div>
     </button>
