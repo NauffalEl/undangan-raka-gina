@@ -8,6 +8,7 @@ import { LoveStory } from "@/components/love-story";
 import { Rsvp } from "@/components/rsvp";
 import { AmplopDigital } from "@/components/amplop";
 import { BukuTamu } from "@/components/buku-tamu";
+import { Lokasi } from "@/components/lokasi";
 import { Penutup } from "@/components/penutup";
 import data from "@/data/undangan.json";
 import type { Undangan } from "@/lib/utils";
@@ -19,10 +20,10 @@ const tanggalCover = tanggalPisah(undangan.tanggalAkad);
 
 export default function Home() {
   const foto = undangan.foto ?? {
-    pria: "/foto/raka.svg",
-    wanita: "/foto/gina.svg",
+    pria: "/foto/pria.jpg",
+    wanita: "/foto/wanita.jpg",
     galeri: [1, 2, 3, 4, 5, 6].map((n) => ({
-      src: `/foto/galeri-${n}.svg`,
+      src: `/foto/galeri-${n}.jpg`,
       alt: `Foto kenangan ${n}`,
     })),
   } as { pria: string; wanita: string; galeri: { src: string; alt: string }[] };
@@ -41,7 +42,7 @@ export default function Home() {
         <Cover
           nama={undangan.pasangan.tagline}
           tanggal={tanggalCover}
-          hero="/foto/hero.svg"
+          hero="/foto/hero.jpg"
         />
 
         <Salam teks={undangan.salam} />
@@ -61,6 +62,8 @@ export default function Home() {
         <AmplopDigital rekening={undangan.rekening} />
 
         <BukuTamu />
+
+        <Lokasi acara={undangan.acara} />
 
         <Penutup
           namaPasangan={undangan.pasangan.tagline}

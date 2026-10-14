@@ -65,5 +65,35 @@
       "deskripsi": "Hari yang dinanti — bersumpah setia di hadapan Tuhan dan orang-orang tercinta."
     }
   ],
-  "penutup": "“Dan di antara tanda-tanda kekuasaan-Nya adalah Dia menciptakan untukmu pasangan-pasangan dari jenismu sendiri, agar kamu cenderung dan merasa tenteram kepadanya...” (QS. Ar-Rum: 21)\n\nTerima kasih atas doa restu dan kehadiran Bapak/Ibu/Saudara/i. Sampai jumpa di hari bahagia kami."
+  "penutup": "“Dan di antara tanda-tanda kekuasaan-Nya adalah Dia menciptakan untukmu pasangan-pasangan dari jenismu sendiri, agar kamu cenderung dan merasa tenteram kepadanya...” (QS. Ar-Rum: 21)\n\nTerima kasih atas doa restu dan kehadiran Bapak/Ibu/Saudara/i. Sampai jumpa di hari bahagia kami.",
+  "foto": {
+    "pria": "/foto/pria.jpg",
+    "wanita": "/foto/wanita.jpg",
+    "galeri": [
+      {
+        "src": "/foto/galeri-1.jpg",
+        "alt": "Foto kenangan 1"
+      },
+      {
+        "src": "/foto/galeri-2.jpg",
+        "alt": "Foto kenangan 2"
+      },
+      {
+        "src": "/foto/galeri-3.jpg",
+        "alt": "Foto kenangan 3"
+      },
+      {
+        "src": "/foto/galeri-4.jpg",
+        "alt": "Foto kenangan 4"
+      },
+      {
+        "src": "/foto/galeri-5.jpg",
+        "alt": "Foto kenangan 5"
+      },
+      {
+        "src": "/foto/galeri-6.jpg",
+        "alt": "Foto kenangan 6"
+      }
+    ]
+  }
 }

@@ -244,18 +244,18 @@ export function Cover({
       aria-labelledby="cover-title"
       className="relative isolate min-h-[92svh] overflow-hidden"
     >
-      {/* Curtain panels — 2 lapis split-screen */}
+      {/* Curtain panels — 2 panel kiri/kanan terangkat + fade */}
       {!revealed && (
-        <div className="absolute inset-0 z-0" aria-hidden>
+        <div className="absolute inset-0 z-0 flex" aria-hidden>
           <div
             className={cn(
-              "absolute inset-x-0 top-0 h-1/2 bg-[var(--bg)]",
+              "h-full w-1/2 bg-[var(--bg)]",
               opening && "curtain-up"
             )}
           />
           <div
             className={cn(
-              "absolute inset-x-0 bottom-0 h-1/2 bg-[var(--surface-warm)]",
+              "h-full w-1/2 bg-[var(--surface-warm)]",
               opening && "curtain-down"
             )}
           />
@@ -273,17 +273,20 @@ export function Cover({
         }}
       >
         {/* V3: FramedImage deco-barok — hero 4:5 portrait, corner flourish 4 arah, 3 lapis 3D */}
-        <FramedImage
-          src={hero}
-          alt={`${nama} — foto sampul undangan`}
-          variant="deco-barok"
-          priority
-          sizes="(max-width: 640px) 224px, 224px"
-          className="float-soft h-72 w-56"
-        />
+        {/* float-soft di pembungkus, hero-zoom (slow 8s) di frame — beda elemen biar tidak tabrakan */}
+        <div className="float-soft">
+          <FramedImage
+            src={hero}
+            alt={`${nama} — foto sampul undangan`}
+            variant="deco-barok"
+            priority
+            sizes="(max-width: 640px) 224px, 224px"
+            className="hero-zoom h-72 w-56"
+          />
+        </div>
 
-        {/* Kelopak bunga jatuh hero (max 8) */}
-        <Kelopak jumlah={8} area="hero" />
+        {/* Kelopak bunga jatuh hero (max 16) */}
+        <Kelopak jumlah={16} area="hero" />
       </div>
 
       {/* Overlay gradien bawah */}

@@ -77,14 +77,18 @@ function PolaroidThumb({
         onClick={onClick}
         aria-label={`Foto ${index + 1}`}
         className={cn(
-          "group transition-transform duration-[220ms] hover:rotate-0 hover:translate-z-[16px]",
+          "stagger-pop transition-transform duration-[220ms] hover:rotate-0 hover:translate-z-[16px]",
           "cursor-pointer",
         )}
-        style={{
-          transform: `rotateX(${rot.x}deg) rotateY(${rot.y}deg) rotateZ(${rot.z}deg) translateZ(${rot.zDepth}px)`,
-          transitionDelay: `${delay}ms`,
-          perspective: "1200px",
-        } as React.CSSProperties}
+        style={
+          {
+            transform: `rotateX(${rot.x}deg) rotateY(${rot.y}deg) rotateZ(${rot.z}deg) translateZ(${rot.zDepth}px)`,
+            ["--pop-rz" as string]: `${rot.z > 0 ? 4 : -4}deg`,
+            transitionDelay: `${delay}ms`,
+            animationDelay: `${index * 80}ms`,
+            perspective: "1200px",
+          } as React.CSSProperties
+        }
       >
         <FramedImage
           src={foto.src}
@@ -109,10 +113,14 @@ function PolaroidThumb({
         setTimeout(() => onClick(), 190);
       }}
       aria-label={`Foto ${index + 1}`}
-      className={cn("perspective-[1200px] cursor-pointer", flipped && "flip-num")}
+      className={cn("stagger-pop perspective-[1200px] cursor-pointer")}
+      style={{
+        ["--pop-rz" as string]: `${rot.z > 0 ? 4 : -4}deg`,
+        animationDelay: `${index * 80}ms`,
+      } as React.CSSProperties}
     >
       <div
-        className="relative aspect-[4/5] w-full transition-transform duration-[380ms]"
+        className={cn("relative aspect-[4/5] w-full transition-transform duration-[380ms]", flipped && "flip-num")}
         style={{
           transformStyle: "preserve-3d",
           transform: flipped ? "rotateY(-90deg)" : "rotateY(0deg)",

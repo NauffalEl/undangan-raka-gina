@@ -26,14 +26,14 @@ function pseudo(i: number, salt = 0): number {
 }
 
 export function Kelopak({
-  jumlah = 8,
+  jumlah = 12,
   area = "hero",
 }: {
   jumlah?: number;
   area?: "hero" | "mempelai" | "penutup";
 }) {
   usePauseOnHidden();
-  const max = area === "hero" ? 8 : area === "mempelai" ? 4 : 6;
+  const max = area === "hero" ? 16 : area === "mempelai" ? 6 : 12;
   const n = Math.min(jumlah, max);
 
   const petals = Array.from({ length: n }, (_, i) => {
@@ -42,9 +42,9 @@ export function Kelopak({
     const r3 = pseudo(i + 13, 9);
     return {
       left: `${((i + 0.5) / n) * 100}%`,
-      drift: `${Math.round((r * 2 - 1) * (area === "hero" ? 60 : 36))}px`,
-      size: area === "hero" ? 9 + Math.round(r2 * 5) : 8 + Math.round(r2 * 4),
-      dur: area === "hero" ? 9 + r3 * 5 : 7 + r3 * 4,
+      drift: `${Math.round((r * 2 - 1) * (area === "hero" ? 80 : 60))}px`,
+      size: area === "hero" ? 10 + Math.round(r2 * 8) : 10 + Math.round(r2 * 6),
+      dur: area === "hero" ? 10 + r3 * 6 : 9 + r3 * 5,
       delay: -(r * (area === "hero" ? 12 : 6)),
       bg: i % 2 === 0 ? "var(--color-blush)" : "var(--color-accent-line)",
       opacity: i % 3 === 0 ? 0.55 : 0.7,

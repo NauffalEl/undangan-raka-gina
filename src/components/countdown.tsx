@@ -45,7 +45,7 @@ function Kotak({
       <span
         className={cn(
           "relative font-display text-countdown font-semibold text-ink tabular-nums",
-          berubah && "flip-num"
+          berubah && "glow-ring flip-num"
         )}
         style={{ transform: "translateZ(10px)" }}
       >

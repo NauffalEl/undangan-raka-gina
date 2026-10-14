@@ -210,7 +210,7 @@ body::after {
   from { transform: scale(0.8); opacity: 0; }
   to { transform: scale(1); opacity: 1; }
 }
-.fab-in { animation: fab-in var(--dur-base) var(--ease-soft-out) both; }
+.fab-in { animation: fabIn var(--dur-base) var(--ease-soft-out) both; }
 
 @keyframes shimmer {
   0%, 100% { opacity: 0.45; }
@@ -225,7 +225,7 @@ body::after {
   from { transform: translateY(6px); opacity: 0; }
   to { transform: translateY(0); opacity: 1; }
 }
-.pop-in { animation: pop-in var(--dur-slow) var(--ease-soft-out) both; }
+.pop-in { animation: popIn var(--dur-slow) var(--ease-soft-out) both; }
 
 .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 .hide-scrollbar::-webkit-scrollbar { display: none; }
@@ -240,10 +240,10 @@ body::after {
 .rise-3d { animation: rise-3d var(--dur-reveal) var(--ease-soft-out) both; }
 
 @keyframes float-soft {
-  0%, 100% { transform: translateY(0) translateZ(0); }
-  50% { transform: translateY(6px) translateZ(0); }
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(6px) scale(1.03); }
 }
-.float-soft { animation: float-soft var(--dur-float) var(--ease-float) infinite; }
+.float-soft { animation: float-soft 5s var(--ease-float) infinite; }
 
 @keyframes petal-fall {
   0% {
@@ -252,7 +252,7 @@ body::after {
   }
   100% {
     transform: translate3d(var(--petal-drift, 0px), 110vh, 0) rotate3d(1, 1, 0, 720deg);
-    opacity: .2;
+    opacity: .15;
   }
 }
 .petal-layer {
@@ -273,26 +273,31 @@ body::after {
   animation: petal-fall var(--dur-petal) linear infinite both;
 }
 
-/* Reveal v2 — rise-3d: perspective di elemen, transform di anak (3D benar) */
+/* Reveal v2 — rise-3d: perspective di elemen, transform di anak (3D benar).
+   Dramatis: rotateX 10deg + translateY 28 + scale .96 + blur 6px, 700ms. */
 .js .reveal3d {
   perspective: 900px;
   opacity: 0;
-  transition: opacity var(--dur-reveal) var(--ease-soft-out);
+  transition: opacity 700ms var(--ease-soft-out);
 }
 .js .reveal3d.is-in {
   opacity: 1;
 }
 .js .reveal3d-inner {
-  transform: rotateX(7deg) translateY(20px);
-  transition: transform var(--dur-reveal) var(--ease-soft-out);
+  transform: rotateX(10deg) translateY(28px) scale(.96);
+  filter: blur(6px);
+  transition:
+    transform 700ms var(--ease-soft-out),
+    filter 700ms var(--ease-soft-out);
 }
 .js .reveal3d.is-in .reveal3d-inner {
-  transform: rotateX(0deg) translateY(0);
+  transform: rotateX(0deg) translateY(0) scale(1);
+  filter: blur(0);
 }
 
 @keyframes gold-shimmer {
-  0%, 100% { background-position: 0% 50%; opacity: .45; }
-  50% { background-position: 120% 50%; opacity: .6; }
+  0%, 100% { background-position: 0% 50%; opacity: .5; }
+  50% { background-position: 140% 50%; opacity: .75; }
 }
 .gold-shimmer {
   background-image: linear-gradient(
@@ -301,11 +306,11 @@ body::after {
     var(--color-accent-lite) 50%,
     var(--color-gold-hi) 100%
   );
-  background-size: 220% 100%;
+  background-size: 240% 100%;
   background-clip: text;
   -webkit-background-clip: text;
   color: transparent;
-  animation: gold-shimmer var(--dur-shimmer) var(--ease-inout) infinite both;
+  animation: gold-shimmer 2.8s var(--ease-inout) infinite both;
 }
 /* Versi dekorasi (bukan teks) */
 .gold-shimmer-bar {
@@ -315,8 +320,8 @@ body::after {
     var(--color-accent-lite) 50%,
     var(--color-gold-hi) 100%
   );
-  background-size: 220% 100%;
-  animation: gold-shimmer var(--dur-shimmer) var(--ease-inout) infinite both;
+  background-size: 240% 100%;
+  animation: gold-shimmer 2.8s var(--ease-inout) infinite both;
 }
 
 @keyframes flip-num {
@@ -325,8 +330,8 @@ body::after {
 }
 .flip-num { animation: flip-num var(--dur-flip) var(--ease-soft-out) both; }
 @keyframes stagger-pop {
-  from { transform: scale(.92) translateY(10px); opacity: 0; }
-  to { transform: scale(1) translateY(0); opacity: 1; }
+  from { transform: scale(.9) translateY(10px) rotate(var(--pop-rz, 4deg)); opacity: 0; }
+  to { transform: scale(1) translateY(0) rotate(0deg); opacity: 1; }
 }
 .stagger-pop { animation: stagger-pop 300ms var(--ease-soft-out) both; }
 
@@ -352,13 +357,42 @@ body::after {
   to { transform: scale(1) translateZ(0) rotateX(0deg); opacity: 1; }
 }
 .zoom-3d { animation: zoom-3d var(--dur-zoom3d) var(--ease-soft-out) both; }
+
+/* — Hero zoom-in lambat (slow ken-burns): scale 1.08 → 1, 8s ease-out — */
+@keyframes hero-zoom { from { transform: scale(1.08); } to { transform: scale(1); } }
+.hero-zoom { animation: hero-zoom 8s var(--ease-inout) both; }
+
+/* — Timeline: garis grow atas→bawah — */
+@keyframes timeline-grow { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+.timeline-grow { animation: timeline-grow 900ms var(--ease-soft-out) both; transform-origin: top; }
+
+/* — Node pulse kecil — */
+@keyframes node-pulse { 0%, 100% { transform: rotate(45deg) scale(1); opacity: 1; } 50% { transform: rotate(45deg) scale(1.08); opacity: .9; } }
+.node-pulse { animation: node-pulse 2.4s var(--ease-inout) infinite; }
+
+/* — Countdown glow ring saat flip — */
+@keyframes glow-ring { 0%, 100% { box-shadow: 0 0 0 0 rgba(194,155,68,0); } 50% { box-shadow: 0 0 0 4px rgba(194,155,68,.35); } }
+.glow-ring { animation: glow-ring var(--dur-flip) var(--ease-soft-out) both; }
+
+/* — Blur → sharp (penutup ayat) — */
+@keyframes blur-in { from { filter: blur(6px); opacity: 0; transform: translateY(8px); } to { filter: blur(0); opacity: 1; transform: translateY(0); } }
+.blur-in { animation: blur-in 700ms var(--ease-soft-out) both; }
+
+/* — Slide-up stagger (lokasi kartu) — */
+@keyframes slide-up { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+.slide-up { animation: slide-up 500ms var(--ease-soft-out) both; }
+
+/* — Letter-spacing: 0.08em → 0.02em (nama penutup) — */
+@keyframes track-in { from { letter-spacing: .08em; opacity: 0; } to { letter-spacing: .02em; opacity: 1; } }
+.track-in { animation: track-in 900ms var(--ease-soft-out) both; }
+
 @keyframes curtain-up {
-  from { transform: translateY(0) translateZ(0); }
-  to { transform: translateY(-100%) translateZ(40px); }
+  from { transform: translateY(0) translateZ(0); opacity: 1; }
+  to { transform: translateY(-100%) translateZ(40px); opacity: 0; }
 }
 @keyframes curtain-down {
-  from { transform: translateY(0) translateZ(0); }
-  to { transform: translateY(100%) translateZ(40px); }
+  from { transform: translateY(0) translateZ(0); opacity: 1; }
+  to { transform: translateY(100%) translateZ(40px); opacity: 0; }
 }
 .curtain-up { animation: curtain-up var(--dur-curtain) var(--ease-curtain) both; }
 .curtain-down { animation: curtain-down var(--dur-curtain) var(--ease-curtain) both; }
@@ -384,7 +418,12 @@ html[data-paused="1"] .petal,
 html[data-paused="1"] .float-soft,
 html[data-paused="1"] .gold-shimmer,
 html[data-paused="1"] .gold-shimmer-bar,
-html[data-paused="1"] .skeleton {
+html[data-paused="1"] .skeleton,
+html[data-paused="1"] .hero-zoom,
+html[data-paused="1"] .node-pulse,
+html[data-paused="1"] .glow-ring,
+html[data-paused="1"] .blur-in,
+html[data-paused="1"] .track-in {
   animation-play-state: paused !important;
 }
 
@@ -620,10 +659,14 @@ html[data-paused="1"] .skeleton {
     color: inherit !important;
     opacity: 1 !important;
   }
-  .rise-3d, .stagger-pop, .zoom-3d, .flip-num {
+  .rise-3d, .stagger-pop, .zoom-3d, .flip-num,
+  .hero-zoom, .timeline-grow, .node-pulse, .glow-ring,
+  .blur-in, .track-in, .slide-up {
     animation: none !important;
     transform: none !important;
     opacity: 1 !important;
+    filter: none !important;
+    letter-spacing: .02em !important;
   }
   .curtain-up, .curtain-down {
     animation: none !important;

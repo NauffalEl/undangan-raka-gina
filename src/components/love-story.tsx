@@ -21,12 +21,18 @@ export function LoveStory({ item }: { item?: Milestone[] }) {
           Love Story
         </h2>
 
-        <ol className="relative mt-10 space-y-10 border-l border-sage-300 pl-8 md:border-l-0 md:pl-0">
+        <ol className="relative mt-10 space-y-10 pl-8 md:pl-0">
+          {/* Garis timeline tumbuh dari atas ke bawah saat masuk viewport */}
+          <span
+            aria-hidden
+            className="timeline-grow absolute inset-y-0 left-0 w-px bg-[linear-gradient(to_bottom,var(--color-accent-line),var(--color-gold-hi),transparent)] md:left-1/2 md:-translate-x-1/2"
+          />
           {item.map((m, i) => (
             <li key={m.judul} className="relative">
               <span
                 aria-hidden
-                className="gold-shimmer-bar absolute -left-[calc(2rem+0.375rem)] top-1.5 h-3 w-3 rounded-full border-2 border-bg md:left-1/2 md:-translate-x-1/2"
+                className="node-pulse gold-shimmer-bar absolute -left-[calc(2rem+0.375rem)] top-1.5 h-3 w-3 rounded-full border-2 border-bg md:left-1/2 md:-translate-x-1/2"
+                style={{ animationDelay: `${i * 150}ms` }}
               />
               <Reveal delay={i * 70}>
                 <article

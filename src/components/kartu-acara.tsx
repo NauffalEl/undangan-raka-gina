@@ -1,7 +1,7 @@
 "use client";
 
 import { Pin, Kalender, Ornamen3D } from "./icons";
-import { Reveal, Tombol, TombolAnchor, FramedCard, OrnateDivider } from "./ui";
+import { Reveal, Tombol, TombolAnchor, FramedCard, OrnateDivider, CornerFlourish } from "./ui";
 import { tautanKalender } from "@/lib/utils";
 import type { Acara } from "@/lib/utils";
 
@@ -16,8 +16,12 @@ function KartuAcara({
   const kalUrl = tautanKalender({ ...acara, nama: acara.nama }, pasangan);
 
   return (
-    <FramedCard className="flex w-full flex-col gap-3 p-5 shadow-[var(--inset-hairline),var(--shadow-md)]">
+    <FramedCard className="card-double-corner flex w-full flex-col gap-3 p-5 shadow-[var(--inset-hairline),var(--shadow-md)]">
       {/* V3: bingkai double-line + corner flourish 4 sudut */}
+      <CornerFlourish pos="tl" size={36} />
+      <CornerFlourish pos="tr" size={36} />
+      <CornerFlourish pos="bl" size={36} />
+      <CornerFlourish pos="br" size={36} />
       <span className="text-eyebrow font-semibold text-accent-deep uppercase">
         {acara.jenis ?? acara.nama}
       </span>

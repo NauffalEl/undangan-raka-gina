@@ -28,14 +28,21 @@ function KartuMempelai({
       {/* V3: arch/topeng — 4:5 border-radius elliptik (Safari-safe) + bronze di belakang
           + ornate ring + corner flourish. Foto di-clip (object-fit:cover), bukan stretch. */}
       <div className="hero-stage relative" style={{ perspective: "900px" }}>
-        <FramedImage
-          src={foto}
-          alt={nama}
-          variant="arch"
-          ratio="arch"
-          sizes="(max-width:640px) 176px, 208px"
-          className="float-soft h-56 w-44 sm:h-64 sm:w-48"
-        />
+        <div
+          className="float-soft"
+          style={{
+            animationDelay: `${label === "Mempelai Wanita" ? 150 : 0}ms`,
+          }}
+        >
+          <FramedImage
+            src={foto}
+            alt={nama}
+            variant="arch"
+            ratio="arch"
+            sizes="(max-width:640px) 176px, 208px"
+            className="stagger-pop h-56 w-44 sm:h-64 sm:w-48"
+          />
+        </div>
         <span
           aria-hidden
           className="pointer-events-none absolute inset-0 -z-10 grid place-items-center font-display text-4xl text-ink-muted"
